@@ -11,32 +11,27 @@ export async function refreshDollar() {
     const { compra, venta, fechaActualizacion } = await res.json();
 
     document.getElementById('dollar-content').innerHTML = `
-      <div class="crypto-list">
-        <div class="crypto-row">
-          <div class="crypto-left">
-            <span class="crypto-badge dollar-badge">USD</span>
-            <span class="crypto-name">Compra</span>
+      <div class="data-list">
+        <div class="data-row">
+          <div class="data-left">
+            <span class="badge badge--usd">USD</span>
+            <span class="data-label">Compra</span>
           </div>
-          <div class="crypto-right">
-            <span class="crypto-price">${ars(compra)}</span>
+          <div class="data-right">
+            <span class="data-value">${ars(compra)}</span>
           </div>
         </div>
-        <div class="crypto-row">
-          <div class="crypto-left">
-            <span class="crypto-badge dollar-badge">USD</span>
-            <span class="crypto-name">Venta</span>
+        <div class="data-row">
+          <div class="data-left">
+            <span class="badge badge--usd">USD</span>
+            <span class="data-label">Venta</span>
           </div>
-          <div class="crypto-right">
-            <span class="crypto-price">${ars(venta)}</span>
+          <div class="data-right">
+            <span class="data-value">${ars(venta)}</span>
           </div>
         </div>
       </div>
     `;
-
-    const t = new Date(fechaActualizacion);
-    document.getElementById('dollar-updated').textContent =
-      'Actualizado ' + t.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-
   } catch (err) {
     document.getElementById('dollar-content').innerHTML =
       `<div class="error-state"><span>Sin datos</span><span class="error-msg">${err.message}</span>

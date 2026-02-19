@@ -24,7 +24,7 @@ function renderFixtures(rows) {
   if (!el) return;
 
   if (!rows?.length) {
-    el.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:13px;">Sin partidos próximos</p>';
+    el.innerHTML = '<p class="cal-empty">Sin partidos próximos</p>';
     return;
   }
 
@@ -36,7 +36,7 @@ function renderFixtures(rows) {
     return `
       <div class="fixture-row">
         <span class="fixture-match">River ${venue} ${rival}</span>
-        <span class="fixture-detail">
+        <span class="fixture-when">
           <span class="fixture-date">${day}</span>
           <span class="fixture-time">${time}</span>
         </span>
@@ -44,9 +44,7 @@ function renderFixtures(rows) {
     `;
   }).join('');
 
-  el.innerHTML = `<div class="fixtures-list">${items}</div>`;
-  document.getElementById('fixtures-updated').textContent =
-    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  el.innerHTML = `<div class="fixture-list">${items}</div>`;
 }
 
 function getValue(row, key) {
@@ -69,7 +67,7 @@ function renderStandings(groups) {
   }
 
   if (!allRows.length) {
-    el.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:13px;">Tabla no disponible</p>';
+    el.innerHTML = '<p class="cal-empty">Tabla no disponible</p>';
     return;
   }
 
@@ -106,8 +104,6 @@ function renderStandings(groups) {
       <tbody>${rows}</tbody>
     </table>
   `;
-  document.getElementById('standings-updated').textContent =
-    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 }
 
 export async function refreshFootball() {

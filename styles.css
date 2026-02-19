@@ -2,35 +2,45 @@
    Variables
    ============================================ */
 :root {
-  --bg: #0e0e10;
-  --gap: 10px;
-  --radius: 20px;
+  --bg: #111111;
+  --gap: 8px;
+  --radius: 18px;
 
-  --river:   #c0001a;
-  --weather: #0077b6;
-  --finance: #1a7a4a;
-  --cal:     #b54000;
+  /* Fresh saturated palette */
+  --river:   #c0001c;   /* Rojo River */
+  --weather: #1646c8;   /* Azul vivo */
+  --dollar:  #145a32;   /* Verde profundo para dólar */
+  --crypto:  #0f3d6e;   /* Azul marino para cripto */
+  --cal:     #7c3d00;   /* Marrón ámbar */
 
-  --white:      #ffffff;
-  --dim:        rgba(255,255,255,0.55);
-  --faint:      rgba(255,255,255,0.22);
-  --item-bg:    rgba(0,0,0,0.20);
-  --item-hover: rgba(0,0,0,0.32);
-  --divider:    rgba(255,255,255,0.10);
+  /* Alias para compatibilidad */
+  --finance: #145a32;
+
+  --river-hi:   #ff5555;
+  --weather-hi: #7eb8ff;
+  --finance-hi: #5dde9a;
+  --cal-hi:     #ffcf5c;
+
+  --white:  #ffffff;
+  --muted:  rgba(255,255,255,0.38);
+  --faint:  rgba(255,255,255,0.07);
 }
 
 /* ============================================
    Reset & Base
    ============================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
+html { height: 100%; }
 
 body {
+  height: 100%;
   font-family: 'Inter', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--white);
-  font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ============================================
@@ -38,45 +48,36 @@ body {
    ============================================ */
 .header {
   display: flex;
-  align-items: center;
-  padding: 18px 20px 6px;
-}
-
-.header-clock {
-  display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
+  padding: 14px 16px 6px;
+  flex-shrink: 0;
 }
-
 .clock {
-  font-size: 22px;
-  font-weight: 300;
-  letter-spacing: -0.5px;
-  color: var(--white);
-  font-variant-numeric: tabular-nums;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.18); font-variant-numeric: tabular-nums;
 }
-
 .date {
-  font-size: 13px;
-  color: var(--faint);
-  font-weight: 400;
-  text-transform: capitalize;
+  font-size: 11px; color: rgba(255,255,255,0.09);
+  font-weight: 400; text-transform: capitalize;
 }
 
 /* ============================================
-   Grid
+   Grid — stretches rows to fill viewport
    ============================================ */
 .grid {
+  flex: 1;
+  min-height: 0;
+  height: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1.3fr 1.7fr;
   grid-template-areas:
     "weather  dollar   crypto"
     "calendar calendar fixtures"
     "standings standings standings";
   gap: var(--gap);
-  padding: var(--gap);
-  max-width: 1440px;
-  margin: 0 auto;
+  padding: 0 var(--gap) var(--gap);
 }
 
 /* ============================================
@@ -84,42 +85,66 @@ body {
    ============================================ */
 .card {
   border-radius: var(--radius);
-  padding: 22px 24px 18px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: filter 0.18s ease;
-  min-height: 140px;
+  border: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  justify-content: space-between;
 }
 
-.card:hover { filter: brightness(1.07); }
-
 .card--weather   { grid-area: weather;   background: var(--weather); }
-.card--dollar    { grid-area: dollar;    background: var(--finance); }
-.card--crypto    { grid-area: crypto;    background: var(--finance); }
+.card--dollar    { grid-area: dollar;    background: var(--dollar); }
+.card--crypto    { grid-area: crypto;    background: var(--crypto); }
 .card--calendar  { grid-area: calendar;  background: var(--cal); }
 .card--fixtures  { grid-area: fixtures;  background: var(--river); }
 .card--standings { grid-area: standings; background: var(--river); }
 
+/* Colored top accent line */
+.card--weather::after   { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--weather-hi), transparent); opacity:0.55; }
+.card--dollar::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--finance-hi), transparent); opacity:0.5; }
+.card--crypto::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, #60a5fa, transparent); opacity:0.5; }
+.card--calendar::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--cal-hi), transparent); opacity:0.5; }
+.card--fixtures::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.5; }
+.card--standings::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.5; }
+
 /* ============================================
-   Card Label (replaces card-header)
+   Card Label
    ============================================ */
 .card-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.09em;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.22);
 }
 
 /* ============================================
-   Card Body
+   Card Body / Footer
    ============================================ */
-.card-body { flex: 1; }
-
-/* ============================================
-   Card Footer (timestamp) — hidden
-   ============================================ */
+.card-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+/* Cards with lots of content: no space-between stretch */
+.card--standings,
+.card--fixtures,
+.card--calendar {
+  justify-content: flex-start;
+  gap: 12px;
+}
+.card--standings .card-body,
+.card--fixtures  .card-body,
+.card--calendar  .card-body {
+  justify-content: flex-start;
+}
 .card-footer { display: none; }
 
 /* ============================================
@@ -129,340 +154,148 @@ body {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
-
 .skeleton-line {
-  height: 13px;
-  border-radius: 6px;
+  height: 10px; border-radius: 4px;
   background: linear-gradient(90deg,
-    rgba(255,255,255,0.07) 25%,
-    rgba(255,255,255,0.14) 50%,
-    rgba(255,255,255,0.07) 75%);
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
-.skeleton-line.short { width: 50%; }
+.skeleton-line.short { width: 40%; }
 
 /* ============================================
-   Error
+   Error / Retry
    ============================================ */
-.error-state {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--dim);
-  font-size: 13px;
-}
-.error-state .error-msg { font-size: 11px; color: rgba(255,160,160,0.9); }
-
+.error-state { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; }
+.error-state .error-msg { font-size: 10px; color: rgba(255,160,160,0.7); }
 .retry-btn {
-  margin-top: 4px;
-  display: inline-block;
-  padding: 5px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--faint);
-  background: transparent;
-  color: var(--dim);
-  font-size: 11px;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.15s;
+  margin-top: 4px; display: inline-block; padding: 4px 12px;
+  border-radius: 20px; border: 1px solid var(--faint);
+  background: transparent; color: var(--muted);
+  font-size: 10px; font-family: inherit; cursor: pointer;
 }
-.retry-btn:hover { background: var(--item-bg); color: var(--white); }
+.retry-btn:hover { background: rgba(255,255,255,0.05); color: var(--white); }
 
 /* ============================================
-   Dollar
+   DATA ROWS — Weather / Dollar / Crypto
    ============================================ */
-.dollar-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 32px;
-}
+.data-list { display: flex; flex-direction: column; gap: 8px; }
 
-.dollar-item { display: flex; flex-direction: column; gap: 4px; }
-
-.dollar-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.dollar-amount {
-  font-size: 40px;
-  font-weight: 300;
-  letter-spacing: -2px;
-  color: var(--white);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.dollar-spread {
-  font-size: 12px;
-  color: var(--dim);
-  margin-top: 6px;
-}
-
-/* ============================================
-   Crypto
-   ============================================ */
-.crypto-list { display: flex; flex-direction: column; gap: 8px; }
-
-.crypto-row {
+.data-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--item-bg);
-  transition: background 0.12s;
-}
-.crypto-row:hover { background: var(--item-hover); }
-
-.crypto-left  { display: flex; align-items: center; gap: 10px; }
-.crypto-right { display: flex; align-items: center; gap: 12px; }
-
-.crypto-badge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  padding: 4px 8px;
-  border-radius: 6px;
-  color: #fff;
-  flex-shrink: 0;
-  min-width: 36px;
-  text-align: center;
-}
-.crypto-badge.btc     { background: rgba(232,130,12,0.9); }
-.crypto-badge.eth     { background: rgba(80,112,216,0.9); }
-.crypto-badge.dollar-badge  { background: rgba(255,255,255,0.15); }
-.crypto-badge.weather-badge { background: rgba(255,255,255,0.15); font-size: 13px; font-weight: 300; letter-spacing: -0.5px; }
-
-.crypto-name {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--dim);
-}
-
-.crypto-price {
-  font-size: 16px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--white);
-  letter-spacing: -0.3px;
-}
-
-.crypto-change {
-  font-size: 11px;
-  font-weight: 600;
-  min-width: 52px;
-  text-align: right;
-}
-.crypto-change.positive { color: #86efac; }
-.crypto-change.negative { color: #fca5a5; }
-
-/* ============================================
-   Weather (reuses crypto-row layout)
-   ============================================ */
-.weather-icon {
-  display: flex;
-  align-items: center;
-  color: rgba(255,255,255,0.75);
-  flex-shrink: 0;
-}
-
-.weather-temp-inline {
-  font-size: 22px;
-  font-weight: 300;
-  letter-spacing: -1px;
-  color: var(--white);
-  font-variant-numeric: tabular-nums;
-}
-
-.weather-meta {
-  font-size: 11px;
-  color: var(--dim);
-  text-align: right;
-}
-
-/* legacy — unused but kept to avoid parse errors */
-.weather-sections { display: flex; flex-direction: column; gap: 8px; }
-
-.weather-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--item-bg);
-}
-
-.weather-info  { flex: 1; }
-
-.weather-location {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--dim);
-  margin-bottom: 2px;
-}
-
-.weather-main {
-  display: flex;
-  align-items: baseline;
   gap: 8px;
 }
+.data-left  { display: flex; align-items: center; gap: 8px; }
+.data-right { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
 
-.weather-temp {
-  font-size: 36px;
-  font-weight: 300;
-  letter-spacing: -1.5px;
-  color: var(--white);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+/* Badge */
+.badge {
+  font-size: 8px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 5px; flex-shrink: 0;
+}
+.badge--btc     { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+.badge--eth     { background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.25); }
+.badge--usd     { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.1); }
+.badge--weather { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.1); }
+
+/* Row label */
+.data-label {
+  font-size: 12px; font-weight: 400;
+  color: rgba(255,255,255,0.35); white-space: nowrap;
 }
 
-.weather-desc  { font-size: 12px; color: var(--dim); margin-top: 2px; }
+/* BIG NUMBER */
+.data-value {
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Annotation */
+.data-note { font-size: 10px; font-weight: 600; white-space: nowrap; line-height: 1; }
+.data-note.pos { color: #34d399; }
+.data-note.neg { color: #f87171; }
+.data-note.dim { color: rgba(255,255,255,0.2); font-weight: 400; font-size: 9px; }
+
+/* Weather icon */
+.weather-icon { display: flex; align-items: center; color: rgba(255,255,255,0.7); flex-shrink: 0; }
 
 /* ============================================
    Fixtures
    ============================================ */
-.fixtures-list { display: flex; flex-direction: column; gap: 8px; }
-
+.fixture-list { display: flex; flex-direction: column; }
 .fixture-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--item-bg);
-  gap: 16px;
-  transition: background 0.12s;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
 }
-.fixture-row:hover { background: var(--item-hover); }
-
-.fixture-match  { font-size: 13px; font-weight: 500; color: var(--white); flex: 1; }
-.fixture-detail { font-size: 11px; color: var(--dim); white-space: nowrap; text-align: right; }
-.fixture-date   { display: block; font-weight: 500; color: var(--white); }
-.fixture-time   { display: block; font-size: 10px; color: var(--dim); margin-top: 1px; }
+.fixture-row:last-child { border-bottom: none; }
+.fixture-match { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.82); flex: 1; line-height: 1.3; }
+.fixture-when { text-align: right; flex-shrink: 0; }
+.fixture-date { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.42); }
+.fixture-time { display: block; font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 1px; }
 
 /* ============================================
    Standings
    ============================================ */
 .standings-zone {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin-bottom: 10px;
+  font-size: 8px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.15); margin-bottom: 8px;
 }
-
-.standings-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
+.standings-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .standings-table thead th {
-  text-align: left;
-  padding: 0 8px 8px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--faint);
-  border-bottom: 1px solid var(--divider);
+  text-align: left; padding: 0 6px 6px; font-size: 8px;
+  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .standings-table thead th.num { text-align: center; }
-
-.standings-table tbody tr {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  transition: background 0.1s;
-}
+.standings-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
 .standings-table tbody tr:last-child { border-bottom: none; }
-.standings-table tbody tr:hover { background: var(--item-bg); }
-
-.standings-table tbody tr.is-river {
-  background: rgba(255,255,255,0.12);
-  border-radius: 8px;
-}
-.standings-table tbody tr.is-river td { color: var(--white); font-weight: 600; }
-
-.standings-table tbody td {
-  padding: 7px 8px;
-  color: var(--dim);
-}
-.standings-table tbody td.num  { text-align: center; width: 32px; }
-.standings-table tbody td.pos  { font-weight: 600; width: 28px; text-align: center; color: var(--white); }
-.standings-table tbody td.team { font-weight: 500; color: var(--white); }
+.standings-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.standings-table tbody tr.is-river { background: rgba(255,60,60,0.12); }
+.standings-table tbody tr.is-river td { color: #fca5a5; font-weight: 700; }
+.standings-table tbody tr.is-river td.team { color: var(--white); }
+.standings-table tbody td { padding: 5px 6px; color: rgba(255,255,255,0.32); }
+.standings-table tbody td.num  { text-align: center; width: 30px; }
+.standings-table tbody td.pos  { font-weight: 700; width: 26px; text-align: center; color: rgba(255,255,255,0.45); }
+.standings-table tbody td.team { font-weight: 500; color: rgba(255,255,255,0.82); }
 
 /* ============================================
    Calendar
    ============================================ */
-.cal-events { display: flex; flex-direction: column; gap: 8px; }
-
-.cal-event {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--item-bg);
-  transition: background 0.12s;
+.cal-list { display: flex; flex-direction: column; }
+.cal-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.cal-event:hover { background: var(--item-hover); }
-
-.cal-date {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 34px;
-  flex-shrink: 0;
-}
-.cal-day   { font-size: 20px; font-weight: 600; line-height: 1; color: var(--white); }
-.cal-month { font-size: 9px;  font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); margin-top: 1px; }
-
-.cal-divider { width: 1px; height: 28px; background: var(--divider); flex-shrink: 0; }
-
-.cal-info { flex: 1; min-width: 0; }
-.cal-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--white);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cal-time  { font-size: 11px; color: var(--dim); margin-top: 2px; }
-
-.cal-connect {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 16px 0;
-  text-align: center;
-}
-.cal-connect-text { font-size: 13px; color: var(--dim); max-width: 200px; line-height: 1.6; }
-
+.cal-row:last-child { border-bottom: none; }
+.cal-date { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+.cal-day   { font-size: 20px; font-weight: 700; line-height: 1; color: var(--white); letter-spacing: -0.5px; }
+.cal-month { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cal-hi); opacity: 0.65; margin-top: 2px; }
+.cal-line  { width: 1px; height: 20px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+.cal-info  { flex: 1; min-width: 0; }
+.cal-title { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-time  { font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 2px; }
+.cal-empty { font-size: 12px; color: rgba(255,255,255,0.25); padding: 6px 0; }
+.cal-connect { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.cal-connect-text { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.5; }
 .connect-btn {
-  padding: 8px 20px;
-  border-radius: 24px;
-  border: 1px solid var(--faint);
-  background: var(--item-bg);
-  color: var(--white);
-  font-size: 12px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  letter-spacing: 0.03em;
-  transition: all 0.15s;
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.65); font-size: 11px; font-weight: 500;
+  font-family: inherit; cursor: pointer; letter-spacing: 0.02em; transition: all 0.15s;
 }
-.connect-btn:hover { background: rgba(255,255,255,0.14); border-color: var(--dim); }
+.connect-btn:hover { background: rgba(255,255,255,0.09); color: var(--white); }
 
 /* ============================================
    Responsive
@@ -477,16 +310,10 @@ body {
       "standings standings";
   }
 }
-
 @media (max-width: 640px) {
   .grid {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "weather" "dollar" "crypto"
-      "calendar" "fixtures" "standings";
-    padding: 8px;
-    gap: 8px;
+    grid-template-areas: "weather" "dollar" "crypto" "calendar" "fixtures" "standings";
+    padding: 6px; gap: 6px;
   }
-  .dollar-amount { font-size: 32px; }
-  .weather-temp  { font-size: 28px; }
 }

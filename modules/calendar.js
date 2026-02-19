@@ -31,7 +31,7 @@ function tryInit() {
 function showNoConfig() {
   document.getElementById('calendar-content').innerHTML = `
     <div class="cal-connect">
-      <p class="cal-connect-text">Configurá tu Google Client ID en config.js</p>
+      <p class="cal-connect-text">Configurá tu Google Client ID en config.js para activar el calendario</p>
     </div>`;
 }
 
@@ -67,7 +67,7 @@ function renderEvents(items) {
   if (!el) return;
 
   if (!items?.length) {
-    el.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:13px;">Sin eventos próximos</p>';
+    el.innerHTML = '<p class="cal-empty">Sin eventos próximos</p>';
     return;
   }
 
@@ -82,12 +82,12 @@ function renderEvents(items) {
     const title = ev.summary || '(Sin título)';
 
     return `
-      <div class="cal-event">
+      <div class="cal-row">
         <div class="cal-date">
           <span class="cal-day">${day}</span>
           <span class="cal-month">${month}</span>
         </div>
-        <div class="cal-divider"></div>
+        <div class="cal-line"></div>
         <div class="cal-info">
           <div class="cal-title" title="${title}">${title}</div>
           <div class="cal-time">${time}</div>
@@ -96,9 +96,7 @@ function renderEvents(items) {
     `;
   }).join('');
 
-  el.innerHTML = `<div class="cal-events">${rows}</div>`;
-  document.getElementById('calendar-updated').textContent =
-    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  el.innerHTML = `<div class="cal-list">${rows}</div>`;
 }
 
 export function refreshCalendar() {
