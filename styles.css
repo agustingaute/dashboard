@@ -1,0 +1,492 @@
+/* ============================================
+   Variables
+   ============================================ */
+:root {
+  --bg: #0e0e10;
+  --gap: 10px;
+  --radius: 20px;
+
+  --river:   #c0001a;
+  --weather: #0077b6;
+  --finance: #1a7a4a;
+  --cal:     #b54000;
+
+  --white:      #ffffff;
+  --dim:        rgba(255,255,255,0.55);
+  --faint:      rgba(255,255,255,0.22);
+  --item-bg:    rgba(0,0,0,0.20);
+  --item-hover: rgba(0,0,0,0.32);
+  --divider:    rgba(255,255,255,0.10);
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px 6px;
+}
+
+.header-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.clock {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+}
+
+.date {
+  font-size: 13px;
+  color: var(--faint);
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+/* ============================================
+   Grid
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "weather  dollar   crypto"
+    "calendar calendar fixtures"
+    "standings standings standings";
+  gap: var(--gap);
+  padding: var(--gap);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   Card Base
+   ============================================ */
+.card {
+  border-radius: var(--radius);
+  padding: 22px 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: filter 0.18s ease;
+  min-height: 140px;
+}
+
+.card:hover { filter: brightness(1.07); }
+
+.card--weather   { grid-area: weather;   background: var(--weather); }
+.card--dollar    { grid-area: dollar;    background: var(--finance); }
+.card--crypto    { grid-area: crypto;    background: var(--finance); }
+.card--calendar  { grid-area: calendar;  background: var(--cal); }
+.card--fixtures  { grid-area: fixtures;  background: var(--river); }
+.card--standings { grid-area: standings; background: var(--river); }
+
+/* ============================================
+   Card Label (replaces card-header)
+   ============================================ */
+.card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ============================================
+   Card Body
+   ============================================ */
+.card-body { flex: 1; }
+
+/* ============================================
+   Card Footer (timestamp) — hidden
+   ============================================ */
+.card-footer { display: none; }
+
+/* ============================================
+   Skeletons
+   ============================================ */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton-line {
+  height: 13px;
+  border-radius: 6px;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.07) 25%,
+    rgba(255,255,255,0.14) 50%,
+    rgba(255,255,255,0.07) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  margin-bottom: 10px;
+}
+.skeleton-line.short { width: 50%; }
+
+/* ============================================
+   Error
+   ============================================ */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--dim);
+  font-size: 13px;
+}
+.error-state .error-msg { font-size: 11px; color: rgba(255,160,160,0.9); }
+
+.retry-btn {
+  margin-top: 4px;
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--faint);
+  background: transparent;
+  color: var(--dim);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.retry-btn:hover { background: var(--item-bg); color: var(--white); }
+
+/* ============================================
+   Dollar
+   ============================================ */
+.dollar-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+}
+
+.dollar-item { display: flex; flex-direction: column; gap: 4px; }
+
+.dollar-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.dollar-amount {
+  font-size: 40px;
+  font-weight: 300;
+  letter-spacing: -2px;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.dollar-spread {
+  font-size: 12px;
+  color: var(--dim);
+  margin-top: 6px;
+}
+
+/* ============================================
+   Crypto
+   ============================================ */
+.crypto-list { display: flex; flex-direction: column; gap: 8px; }
+
+.crypto-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--item-bg);
+  transition: background 0.12s;
+}
+.crypto-row:hover { background: var(--item-hover); }
+
+.crypto-left  { display: flex; align-items: center; gap: 10px; }
+.crypto-right { display: flex; align-items: center; gap: 12px; }
+
+.crypto-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #fff;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+}
+.crypto-badge.btc     { background: rgba(232,130,12,0.9); }
+.crypto-badge.eth     { background: rgba(80,112,216,0.9); }
+.crypto-badge.dollar-badge  { background: rgba(255,255,255,0.15); }
+.crypto-badge.weather-badge { background: rgba(255,255,255,0.15); font-size: 13px; font-weight: 300; letter-spacing: -0.5px; }
+
+.crypto-name {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.crypto-price {
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--white);
+  letter-spacing: -0.3px;
+}
+
+.crypto-change {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 52px;
+  text-align: right;
+}
+.crypto-change.positive { color: #86efac; }
+.crypto-change.negative { color: #fca5a5; }
+
+/* ============================================
+   Weather (reuses crypto-row layout)
+   ============================================ */
+.weather-icon {
+  display: flex;
+  align-items: center;
+  color: rgba(255,255,255,0.75);
+  flex-shrink: 0;
+}
+
+.weather-temp-inline {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-meta {
+  font-size: 11px;
+  color: var(--dim);
+  text-align: right;
+}
+
+/* legacy — unused but kept to avoid parse errors */
+.weather-sections { display: flex; flex-direction: column; gap: 8px; }
+
+.weather-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--item-bg);
+}
+
+.weather-info  { flex: 1; }
+
+.weather-location {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 2px;
+}
+
+.weather-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.weather-temp {
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: -1.5px;
+  color: var(--white);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-desc  { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+/* ============================================
+   Fixtures
+   ============================================ */
+.fixtures-list { display: flex; flex-direction: column; gap: 8px; }
+
+.fixture-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--item-bg);
+  gap: 16px;
+  transition: background 0.12s;
+}
+.fixture-row:hover { background: var(--item-hover); }
+
+.fixture-match  { font-size: 13px; font-weight: 500; color: var(--white); flex: 1; }
+.fixture-detail { font-size: 11px; color: var(--dim); white-space: nowrap; text-align: right; }
+.fixture-date   { display: block; font-weight: 500; color: var(--white); }
+.fixture-time   { display: block; font-size: 10px; color: var(--dim); margin-top: 1px; }
+
+/* ============================================
+   Standings
+   ============================================ */
+.standings-zone {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 10px;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.standings-table thead th {
+  text-align: left;
+  padding: 0 8px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border-bottom: 1px solid var(--divider);
+}
+.standings-table thead th.num { text-align: center; }
+
+.standings-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.1s;
+}
+.standings-table tbody tr:last-child { border-bottom: none; }
+.standings-table tbody tr:hover { background: var(--item-bg); }
+
+.standings-table tbody tr.is-river {
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+.standings-table tbody tr.is-river td { color: var(--white); font-weight: 600; }
+
+.standings-table tbody td {
+  padding: 7px 8px;
+  color: var(--dim);
+}
+.standings-table tbody td.num  { text-align: center; width: 32px; }
+.standings-table tbody td.pos  { font-weight: 600; width: 28px; text-align: center; color: var(--white); }
+.standings-table tbody td.team { font-weight: 500; color: var(--white); }
+
+/* ============================================
+   Calendar
+   ============================================ */
+.cal-events { display: flex; flex-direction: column; gap: 8px; }
+
+.cal-event {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--item-bg);
+  transition: background 0.12s;
+}
+.cal-event:hover { background: var(--item-hover); }
+
+.cal-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 34px;
+  flex-shrink: 0;
+}
+.cal-day   { font-size: 20px; font-weight: 600; line-height: 1; color: var(--white); }
+.cal-month { font-size: 9px;  font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); margin-top: 1px; }
+
+.cal-divider { width: 1px; height: 28px; background: var(--divider); flex-shrink: 0; }
+
+.cal-info { flex: 1; min-width: 0; }
+.cal-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-time  { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+.cal-connect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
+  text-align: center;
+}
+.cal-connect-text { font-size: 13px; color: var(--dim); max-width: 200px; line-height: 1.6; }
+
+.connect-btn {
+  padding: 8px 20px;
+  border-radius: 24px;
+  border: 1px solid var(--faint);
+  background: var(--item-bg);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+.connect-btn:hover { background: rgba(255,255,255,0.14); border-color: var(--dim); }
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1080px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "weather  dollar"
+      "crypto   fixtures"
+      "calendar calendar"
+      "standings standings";
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "weather" "dollar" "crypto"
+      "calendar" "fixtures" "standings";
+    padding: 8px;
+    gap: 8px;
+  }
+  .dollar-amount { font-size: 32px; }
+  .weather-temp  { font-size: 28px; }
+}

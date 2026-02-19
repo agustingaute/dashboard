@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="header">
+    <span id="clock" class="clock"></span>
+    <span id="date-display" class="date"></span>
+  </header>
+
+  <main class="grid">
+
+    <div class="card card--weather">
+      <div class="card-label">Clima</div>
+      <div class="card-body" id="weather-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="weather-updated"></div>
+    </div>
+
+    <div class="card card--dollar">
+      <div class="card-label">Dólar Blue</div>
+      <div class="card-body" id="dollar-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="dollar-updated"></div>
+    </div>
+
+    <div class="card card--crypto">
+      <div class="card-label">Cripto</div>
+      <div class="card-body" id="crypto-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="crypto-updated"></div>
+    </div>
+
+    <div class="card card--calendar">
+      <div class="card-label">Calendario</div>
+      <div class="card-body" id="calendar-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="calendar-updated"></div>
+    </div>
+
+    <div class="card card--fixtures">
+      <div class="card-label">River Plate — Próximos</div>
+      <div class="card-body" id="fixtures-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="fixtures-updated"></div>
+    </div>
+
+    <div class="card card--standings">
+      <div class="card-label">Liga Profesional</div>
+      <div class="card-body" id="standings-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="card-footer" id="standings-updated"></div>
+    </div>
+
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://apis.google.com/js/api.js" onload="window._gapiLoaded && window._gapiLoaded()"></script>
+  <script src="https://accounts.google.com/gsi/client" onload="window._gisLoaded && window._gisLoaded()"></script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>

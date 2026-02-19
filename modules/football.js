@@ -1,0 +1,129 @@
+const RIVER_ID = 'igi';
+const LIGA_ID  = 'hc';
+const PROXY    = 'https://corsproxy.io/?';
+
+async function fetchSSR(url) {
+  const res = await fetch(PROXY + encodeURIComponent(url), { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const html = await res.text();
+  const m = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!m) throw new Error('Sin datos');
+  return JSON.parse(m[1]).props?.pageProps?.data;
+}
+
+function gameDate(startTime) {
+  const [d, t] = startTime.split(' ');
+  const [dd, mm, yyyy] = d.split('-');
+  const date = new Date(`${yyyy}-${mm}-${dd}T${t}:00-03:00`);
+  const day = date.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
+  return { day, time: t + 'hs' };
+}
+
+function renderFixtures(rows) {
+  const el = document.getElementById('fixtures-content');
+  if (!el) return;
+
+  if (!rows?.length) {
+    el.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:13px;">Sin partidos próximos</p>';
+    return;
+  }
+
+  const items = rows.slice(0, 4).map(({ game }) => {
+    const isHome = game.teams[0].id === RIVER_ID;
+    const rival  = isHome ? game.teams[1].name : game.teams[0].name;
+    const venue  = isHome ? 'vs' : 'en';
+    const { day, time } = gameDate(game.start_time);
+    return `
+      <div class="fixture-row">
+        <span class="fixture-match">River ${venue} ${rival}</span>
+        <span class="fixture-detail">
+          <span class="fixture-date">${day}</span>
+          <span class="fixture-time">${time}</span>
+        </span>
+      </div>
+    `;
+  }).join('');
+
+  el.innerHTML = `<div class="fixtures-list">${items}</div>`;
+  document.getElementById('fixtures-updated').textContent =
+    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function getValue(row, key) {
+  return row.values.find(v => v.key === key)?.value ?? '—';
+}
+
+function renderStandings(groups) {
+  const el = document.getElementById('standings-content');
+  if (!el) return;
+
+  let allRows = [], zoneName = '';
+  for (const group of groups) {
+    for (const table of group.tables ?? []) {
+      const rows = table.table?.rows ?? [];
+      if (rows.find(r => r.entity?.object?.id === RIVER_ID) && group.name && !allRows.length) {
+        allRows = rows;
+        zoneName = [group.name, table.name].filter(Boolean).join(' · ');
+      }
+    }
+  }
+
+  if (!allRows.length) {
+    el.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:13px;">Tabla no disponible</p>';
+    return;
+  }
+
+  const top = allRows.slice(0, 10);
+  const rIdx = allRows.findIndex(r => r.entity?.object?.id === RIVER_ID);
+  if (rIdx >= 10) top.push(allRows[rIdx]);
+
+  const rows = top.map(row => {
+    const isRiver = row.entity?.object?.id === RIVER_ID;
+    const name = row.entity?.object?.short_name || '?';
+    return `
+      <tr class="${isRiver ? 'is-river' : ''}">
+        <td class="pos">${row.num}</td>
+        <td class="team">${name}</td>
+        <td class="num">${getValue(row, 'GamePlayed')}</td>
+        <td class="num">${getValue(row, 'GamesWon')}</td>
+        <td class="num">${getValue(row, 'GamesEven')}</td>
+        <td class="num">${getValue(row, 'GamesLost')}</td>
+        <td class="num"><strong>${getValue(row, 'Points')}</strong></td>
+      </tr>
+    `;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="standings-zone">${zoneName}</div>
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th class="num">#</th><th>Equipo</th>
+          <th class="num">PJ</th><th class="num">G</th>
+          <th class="num">E</th><th class="num">P</th><th class="num">Pts</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+  document.getElementById('standings-updated').textContent =
+    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+}
+
+export async function refreshFootball() {
+  try {
+    const [team, league] = await Promise.all([
+      fetchSSR(`https://www.promiedos.com.ar/team/river-plate/${RIVER_ID}`),
+      fetchSSR(`https://www.promiedos.com.ar/league/liga-profesional/${LIGA_ID}`),
+    ]);
+    renderFixtures(team?.games?.next?.rows ?? []);
+    renderStandings(league?.tables_groups ?? []);
+  } catch (err) {
+    ['fixtures-content', 'standings-content'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `<div class="error-state"><span>Sin datos</span>
+        <span class="error-msg">${err.message}</span>
+        <button class="retry-btn" onclick="window._retry('football')">Reintentar</button></div>`;
+    });
+  }
+}
