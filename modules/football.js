@@ -31,11 +31,11 @@ function renderFixtures(rows) {
   const items = rows.slice(0, 4).map(({ game }) => {
     const isHome = game.teams[0].id === RIVER_ID;
     const rival  = isHome ? game.teams[1].name : game.teams[0].name;
-    const venue  = isHome ? 'vs' : 'en';
+    const tag    = isHome ? '<span class="fixture-tag local">L</span>' : '<span class="fixture-tag visita">V</span>';
     const { day, time } = gameDate(game.start_time);
     return `
       <div class="fixture-row">
-        <span class="fixture-match">River ${venue} ${rival}</span>
+        <span class="fixture-match">${tag} River vs ${rival}</span>
         <span class="fixture-when">
           <span class="fixture-date">${day}</span>
           <span class="fixture-time">${time}</span>
@@ -86,7 +86,7 @@ function renderStandings(groups) {
         <td class="num">${getValue(row, 'GamesWon')}</td>
         <td class="num">${getValue(row, 'GamesEven')}</td>
         <td class="num">${getValue(row, 'GamesLost')}</td>
-        <td class="num"><strong>${getValue(row, 'Points')}</strong></td>
+        <td class="num pts">${getValue(row, 'Points')}</td>
       </tr>
     `;
   }).join('');

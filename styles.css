@@ -199,15 +199,15 @@ body {
   letter-spacing: 0.08em; text-transform: uppercase;
   padding: 2px 7px; border-radius: 5px; flex-shrink: 0;
 }
-.badge--btc     { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
-.badge--eth     { background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.25); }
-.badge--usd     { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.1); }
-.badge--weather { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.1); }
+.badge--btc     { background: rgba(251,146,60,0.25); color: #fdba74; border: 1px solid rgba(251,146,60,0.4); }
+.badge--eth     { background: rgba(129,140,248,0.25); color: #a5b4fc; border: 1px solid rgba(129,140,248,0.4); }
+.badge--usd     { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.2); }
+.badge--weather { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.2); }
 
 /* Row label */
 .data-label {
-  font-size: 12px; font-weight: 400;
-  color: rgba(255,255,255,0.35); white-space: nowrap;
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.7); white-space: nowrap;
 }
 
 /* BIG NUMBER */
@@ -225,7 +225,7 @@ body {
 .data-note { font-size: 10px; font-weight: 600; white-space: nowrap; line-height: 1; }
 .data-note.pos { color: #34d399; }
 .data-note.neg { color: #f87171; }
-.data-note.dim { color: rgba(255,255,255,0.2); font-weight: 400; font-size: 9px; }
+.data-note.dim { color: rgba(255,255,255,0.5); font-weight: 400; font-size: 10px; }
 
 /* Weather icon */
 .weather-icon { display: flex; align-items: center; color: rgba(255,255,255,0.7); flex-shrink: 0; }
@@ -239,10 +239,22 @@ body {
   padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
 }
 .fixture-row:last-child { border-bottom: none; }
-.fixture-match { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.82); flex: 1; line-height: 1.3; }
+.fixture-match {
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.9); flex: 1; line-height: 1.3;
+  display: flex; align-items: center; gap: 7px;
+}
+.fixture-tag {
+  font-size: 8px; font-weight: 800; letter-spacing: 0.06em;
+  padding: 2px 5px; border-radius: 4px; flex-shrink: 0;
+  line-height: 1.4;
+}
+.fixture-tag.local  { background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.9); }
+.fixture-tag.visita { background: rgba(0,0,0,0.25);        color: rgba(255,255,255,0.6); }
+
 .fixture-when { text-align: right; flex-shrink: 0; }
-.fixture-date { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.42); }
-.fixture-time { display: block; font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 1px; }
+.fixture-date { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); }
+.fixture-time { display: block; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.45); margin-top: 2px; }
 
 /* ============================================
    Standings
@@ -264,10 +276,11 @@ body {
 .standings-table tbody tr.is-river { background: rgba(255,60,60,0.12); }
 .standings-table tbody tr.is-river td { color: #fca5a5; font-weight: 700; }
 .standings-table tbody tr.is-river td.team { color: var(--white); }
-.standings-table tbody td { padding: 5px 6px; color: rgba(255,255,255,0.32); }
-.standings-table tbody td.num  { text-align: center; width: 30px; }
-.standings-table tbody td.pos  { font-weight: 700; width: 26px; text-align: center; color: rgba(255,255,255,0.45); }
+.standings-table tbody td { padding: 5px 6px; color: rgba(255,255,255,0.55); }
+.standings-table tbody td.num  { text-align: center; width: 30px; font-weight: 600; }
+.standings-table tbody td.pos  { font-weight: 700; width: 26px; text-align: center; color: rgba(255,255,255,0.65); }
 .standings-table tbody td.team { font-weight: 500; color: rgba(255,255,255,0.82); }
+.standings-table tbody td.pts  { font-weight: 700; color: rgba(255,255,255,0.88); }
 
 /* ============================================
    Calendar
