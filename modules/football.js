@@ -28,7 +28,7 @@ function renderFixtures(rows) {
     return;
   }
 
-  const items = rows.slice(0, 4).map(({ game }) => {
+  const items = rows.slice(0, 6).map(({ game }) => {
     const isHome = game.teams[0].id === RIVER_ID;
     const rival  = isHome ? game.teams[1].name : game.teams[0].name;
     const tag    = isHome ? '<span class="fixture-tag local">L</span>' : '<span class="fixture-tag visita">V</span>';

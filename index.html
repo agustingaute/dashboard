@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body class="app">
 
@@ -16,63 +16,63 @@
     <span id="date-display" class="date"></span>
   </header>
 
-  <main class="grid">
+  <main class="layout">
 
-    <div class="card card--weather">
-      <div class="card-label">Clima</div>
-      <div class="card-body" id="weather-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
+    <!-- Fila 1: Clima / Dólar / Cripto -->
+    <div class="row row--top">
+      <div class="card card--weather">
+        <div class="card-label">Clima</div>
+        <div class="card-body" id="weather-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
       </div>
-      <div class="card-footer" id="weather-updated"></div>
+      <div class="card card--dollar">
+        <div class="card-label">Dólar Blue</div>
+        <div class="card-body" id="dollar-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+      <div class="card card--crypto">
+        <div class="card-label">Cripto</div>
+        <div class="card-body" id="crypto-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="card card--dollar">
-      <div class="card-label">Dólar Blue</div>
-      <div class="card-body" id="dollar-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
+    <!-- Fila 2: Fixtures (izquierda) / Tabla de posiciones (derecha) -->
+    <div class="row row--mid">
+      <div class="card card--fixtures">
+        <div class="card-label">River Plate — Próximos</div>
+        <div class="card-body" id="fixtures-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
       </div>
-      <div class="card-footer" id="dollar-updated"></div>
+      <div class="card card--standings">
+        <div class="card-label">Liga Profesional</div>
+        <div class="card-body" id="standings-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="card card--crypto">
-      <div class="card-label">Cripto</div>
-      <div class="card-body" id="crypto-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
+    <!-- Fila 3: Calendario (ancho completo) -->
+    <div class="row row--cal">
+      <div class="card card--calendar">
+        <div class="card-label">Calendario</div>
+        <div class="card-body" id="calendar-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
       </div>
-      <div class="card-footer" id="crypto-updated"></div>
-    </div>
-
-    <div class="card card--calendar">
-      <div class="card-label">Calendario</div>
-      <div class="card-body" id="calendar-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
-      </div>
-      <div class="card-footer" id="calendar-updated"></div>
-    </div>
-
-    <div class="card card--fixtures">
-      <div class="card-label">River Plate — Próximos</div>
-      <div class="card-body" id="fixtures-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
-      </div>
-      <div class="card-footer" id="fixtures-updated"></div>
-    </div>
-
-    <div class="card card--standings">
-      <div class="card-label">Liga Profesional</div>
-      <div class="card-body" id="standings-content">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
-      </div>
-      <div class="card-footer" id="standings-updated"></div>
     </div>
 
   </main>

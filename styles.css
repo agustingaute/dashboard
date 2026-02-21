@@ -6,20 +6,22 @@
   --gap: 8px;
   --radius: 18px;
 
-  /* Fresh saturated palette */
-  --river:   #c0001c;   /* Rojo River */
-  --weather: #1646c8;   /* Azul vivo */
-  --dollar:  #145a32;   /* Verde profundo para dólar */
-  --crypto:  #0f3d6e;   /* Azul marino para cripto */
-  --cal:     #7c3d00;   /* Marrón ámbar */
+  /* Paleta nueva */
+  --river:   #C8222E;   /* Rojo puro — fixtures */
+  --river2:  #574141;   /* Marrón oscuro — standings */
+  --weather: #0097BB;   /* Celeste — clima */
+  --dollar:  #009849;   /* Verde — dólar */
+  --crypto:  #006285;   /* Azul petróleo — cripto */
+  --cal:     #f5f0eb;   /* Fondo claro marfil — calendario */
 
   /* Alias para compatibilidad */
-  --finance: #145a32;
+  --finance: #009849;
 
-  --river-hi:   #ff5555;
-  --weather-hi: #7eb8ff;
-  --finance-hi: #5dde9a;
-  --cal-hi:     #ffcf5c;
+  --river-hi:   #f4a0b0;
+  --weather-hi: #7fd8f0;
+  --finance-hi: #6de8a0;
+  --crypto-hi:  #6bbfdc;
+  --cal-hi:     #8b1a2e;   /* Bordó para acento calendario */
 
   --white:  #ffffff;
   --muted:  rgba(255,255,255,0.38);
@@ -33,14 +35,13 @@
 html { height: 100%; }
 
 body {
-  height: 100%;
+  min-height: 100%;
   font-family: 'Inter', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--white);
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 /* ============================================
@@ -63,53 +64,59 @@ body {
 }
 
 /* ============================================
-   Grid — stretches rows to fill viewport
+   Layout — filas independientes
    ============================================ */
-.grid {
-  flex: 1;
-  min-height: 0;
-  height: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1.3fr 1.7fr;
-  grid-template-areas:
-    "weather  dollar   crypto"
-    "calendar calendar fixtures"
-    "standings standings standings";
+.layout {
+  display: flex;
+  flex-direction: column;
   gap: var(--gap);
   padding: 0 var(--gap) var(--gap);
 }
+
+.row {
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-start;
+}
+
+.row--mid {
+  align-items: stretch;
+}
+
+.row--top .card           { flex: 1; }
+.row--mid .card--fixtures { flex: 2; }
+.row--mid .card--standings{ flex: 3; }
+.row--cal .card--calendar { flex: 1; }
 
 /* ============================================
    Card Base
    ============================================ */
 .card {
   border-radius: var(--radius);
-  padding: 20px 22px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   border: 1px solid rgba(255,255,255,0.07);
   position: relative;
   overflow: hidden;
-  min-height: 0;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.card--weather   { grid-area: weather;   background: var(--weather); }
-.card--dollar    { grid-area: dollar;    background: var(--dollar); }
-.card--crypto    { grid-area: crypto;    background: var(--crypto); }
-.card--calendar  { grid-area: calendar;  background: var(--cal); }
-.card--fixtures  { grid-area: fixtures;  background: var(--river); }
-.card--standings { grid-area: standings; background: var(--river); }
+.card--weather   { background: var(--weather); }
+.card--dollar    { background: var(--dollar);  }
+.card--crypto    { background: var(--crypto);  }
+.card--calendar  { background: var(--cal); }
+.card--fixtures  { background: var(--river); }
+.card--standings { background: var(--river2); }
 
 /* Colored top accent line */
-.card--weather::after   { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--weather-hi), transparent); opacity:0.55; }
-.card--dollar::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--finance-hi), transparent); opacity:0.5; }
-.card--crypto::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, #60a5fa, transparent); opacity:0.5; }
-.card--calendar::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--cal-hi), transparent); opacity:0.5; }
-.card--fixtures::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.5; }
-.card--standings::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.5; }
+.card--weather::after   { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--weather-hi), transparent); opacity:0.6; }
+.card--dollar::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--finance-hi), transparent); opacity:0.6; }
+.card--crypto::after    { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--crypto-hi), transparent); opacity:0.6; }
+.card--calendar::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--cal-hi), transparent); opacity:0.7; }
+.card--fixtures::after  { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.6; }
+.card--standings::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--river-hi), transparent); opacity:0.6; }
 
 /* ============================================
    Card Label
@@ -119,7 +126,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.45);
 }
 
 /* ============================================
@@ -138,12 +145,17 @@ body {
 .card--fixtures,
 .card--calendar {
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
+  padding: 16px 18px;
 }
 .card--standings .card-body,
-.card--fixtures  .card-body,
 .card--calendar  .card-body {
   justify-content: flex-start;
+}
+.card--fixtures .card-body {
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
 }
 .card-footer { display: none; }
 
@@ -233,50 +245,50 @@ body {
 /* ============================================
    Fixtures
    ============================================ */
-.fixture-list { display: flex; flex-direction: column; }
+.fixture-list { display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
 .fixture-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
 }
 .fixture-row:last-child { border-bottom: none; }
 .fixture-match {
-  font-size: 12px; font-weight: 500;
+  font-size: 14px; font-weight: 500;
   color: rgba(255,255,255,0.9); flex: 1; line-height: 1.3;
   display: flex; align-items: center; gap: 7px;
 }
 .fixture-tag {
-  font-size: 8px; font-weight: 800; letter-spacing: 0.06em;
-  padding: 2px 5px; border-radius: 4px; flex-shrink: 0;
+  font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
+  padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
   line-height: 1.4;
 }
 .fixture-tag.local  { background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.9); }
 .fixture-tag.visita { background: rgba(0,0,0,0.25);        color: rgba(255,255,255,0.6); }
 
 .fixture-when { text-align: right; flex-shrink: 0; }
-.fixture-date { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); }
-.fixture-time { display: block; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.45); margin-top: 2px; }
+.fixture-date { display: block; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
+.fixture-time { display: block; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.45); margin-top: 2px; }
 
 /* ============================================
    Standings
    ============================================ */
 .standings-zone {
   font-size: 8px; font-weight: 700; letter-spacing: 0.14em;
-  text-transform: uppercase; color: rgba(255,255,255,0.15); margin-bottom: 8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 8px;
 }
-.standings-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.standings-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .standings-table thead th {
-  text-align: left; padding: 0 6px 6px; font-size: 8px;
+  text-align: left; padding: 0 6px 7px; font-size: 9px;
   font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .standings-table thead th.num { text-align: center; }
 .standings-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
 .standings-table tbody tr:last-child { border-bottom: none; }
 .standings-table tbody tr:hover { background: rgba(255,255,255,0.03); }
-.standings-table tbody tr.is-river { background: rgba(255,60,60,0.12); }
-.standings-table tbody tr.is-river td { color: #fca5a5; font-weight: 700; }
+.standings-table tbody tr.is-river { background: rgba(255,255,255,0.1); }
+.standings-table tbody tr.is-river td { color: #ffd0d8; font-weight: 700; }
 .standings-table tbody tr.is-river td.team { color: var(--white); }
-.standings-table tbody td { padding: 5px 6px; color: rgba(255,255,255,0.55); }
+.standings-table tbody td { padding: 4px 6px; color: rgba(255,255,255,0.55); }
 .standings-table tbody td.num  { text-align: center; width: 30px; font-weight: 600; }
 .standings-table tbody td.pos  { font-weight: 700; width: 26px; text-align: center; color: rgba(255,255,255,0.65); }
 .standings-table tbody td.team { font-weight: 500; color: rgba(255,255,255,0.82); }
@@ -285,48 +297,127 @@ body {
 /* ============================================
    Calendar
    ============================================ */
-.cal-list { display: flex; flex-direction: column; }
-.cal-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+/* Card label override para fondo claro */
+.card--calendar .card-label {
+  color: rgba(139,26,46,0.5);
 }
-.cal-row:last-child { border-bottom: none; }
-.cal-date { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
-.cal-day   { font-size: 20px; font-weight: 700; line-height: 1; color: var(--white); letter-spacing: -0.5px; }
-.cal-month { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cal-hi); opacity: 0.65; margin-top: 2px; }
-.cal-line  { width: 1px; height: 20px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
-.cal-info  { flex: 1; min-width: 0; }
-.cal-title { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cal-time  { font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 2px; }
-.cal-empty { font-size: 12px; color: rgba(255,255,255,0.25); padding: 6px 0; }
+/* Legacy list styles (kept for fallback) */
+.cal-empty { font-size: 12px; color: rgba(0,0,0,0.3); padding: 6px 0; }
 .cal-connect { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.cal-connect-text { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.5; }
+.cal-connect-text { font-size: 12px; color: rgba(0,0,0,0.4); line-height: 1.5; }
 .connect-btn {
   padding: 6px 14px; border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.65); font-size: 11px; font-weight: 500;
+  border: 1px solid rgba(139,26,46,0.2);
+  background: rgba(139,26,46,0.08);
+  color: rgba(139,26,46,0.8); font-size: 11px; font-weight: 500;
   font-family: inherit; cursor: pointer; letter-spacing: 0.02em; transition: all 0.15s;
 }
-.connect-btn:hover { background: rgba(255,255,255,0.09); color: var(--white); }
+.connect-btn:hover { background: rgba(139,26,46,0.15); color: var(--cal-hi); }
+
+/* ============================================
+   Mini Month Calendar
+   ============================================ */
+.mcal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.mcal-month-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: capitalize; color: rgba(0,0,0,0.45);
+}
+.mcal-legend {
+  display: flex; gap: 8px; align-items: center;
+}
+.mcal-legend-item {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 8px; color: rgba(0,0,0,0.4); font-weight: 500;
+}
+.mcal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.mcal-dow {
+  font-size: 8px; font-weight: 700;
+  text-transform: uppercase; color: rgba(0,0,0,0.22);
+  text-align: center; padding-bottom: 5px;
+}
+.mcal-cell {
+  min-height: 56px;
+  padding: 5px 5px 4px;
+  border-radius: 6px;
+  display: flex; flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  /* base: se sobreescribe por JS con --day-shade */
+  background: var(--day-shade, rgba(0,0,0,0.03));
+}
+.mcal-cell--empty { background: transparent !important; }
+.mcal-cell--today { background: rgba(0,0,0,0.09) !important; }
+.mcal-num {
+  font-size: 9px; font-weight: 600;
+  color: rgba(0,0,0,0.45);
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  align-self: center;
+}
+.mcal-num--today {
+  color: var(--white);
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+  font-weight: 800; font-size: 9px;
+}
+.mcal-events {
+  display: flex; flex-direction: column;
+  gap: 2px; width: 100%;
+}
+.mcal-event-pill {
+  display: flex; align-items: center; gap: 3px;
+  width: 100%; overflow: hidden;
+}
+.mcal-event-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mcal-event-label {
+  font-size: 9.5px; font-weight: 600;
+  color: rgba(0,0,0,0.65);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  flex: 1; line-height: 1.3;
+}
+.mcal-event-more {
+  font-size: 9px; color: rgba(0,0,0,0.4);
+  font-weight: 500; line-height: 1.3;
+  align-self: flex-start;
+}
+
+/* ── Tooltip en hover sobre evento (manejado por JS) ── */
+.mcal-event-pill[data-tooltip] { cursor: default; }
+
+#cal-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  color: #ffffff;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.6;
+  padding: 7px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 260px;
+  display: none;
+}
 
 /* ============================================
    Responsive
    ============================================ */
-@media (max-width: 1080px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-areas:
-      "weather  dollar"
-      "crypto   fixtures"
-      "calendar calendar"
-      "standings standings";
-  }
-}
 @media (max-width: 640px) {
-  .grid {
-    grid-template-columns: 1fr;
-    grid-template-areas: "weather" "dollar" "crypto" "calendar" "fixtures" "standings";
-    padding: 6px; gap: 6px;
-  }
+  .row { flex-direction: column; }
+  .layout { padding: 6px; gap: 6px; }
 }
