@@ -14,7 +14,7 @@
 // 3. Run: python3 -m http.server 8080 (from this folder)
 // 4. Open: http://localhost:8080
 
-const CONFIG = {
+window.CONFIG = {
   GOOGLE_CLIENT_ID: 'YOUR_CLIENT_ID.apps.googleusercontent.com',
   GOOGLE_API_KEY: 'YOUR_GOOGLE_API_KEY',
 

@@ -19,7 +19,7 @@ async function fetchEvents(calendarId, apiKey) {
 }
 
 async function listEvents() {
-  const apiKey = CONFIG.GOOGLE_API_KEY;
+  const apiKey = window.CONFIG?.GOOGLE_API_KEY;
   if (!apiKey) { showError('Falta GOOGLE_API_KEY en config.js'); return; }
 
   try {
@@ -128,9 +128,6 @@ function renderMonthGrid(items, today) {
       ${cells}
     </div>`;
 }
-
-// Load on startup
-listEvents();
 
 export function refreshCalendar() {
   listEvents();
