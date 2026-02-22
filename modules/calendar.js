@@ -53,9 +53,16 @@ function renderMonthGrid(items, today) {
   // Build map: key -> [{ color, title, startDT, endDT, allDay }]
   const byDay = {};
   items.forEach(ev => {
-    const raw = ev.start.date || ev.start.dateTime;
-    const d   = new Date(raw);
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    let year, month, day;
+    if (ev.start.date) {
+      // All-day: "YYYY-MM-DD" — parse directly to avoid UTC offset shifting the date
+      [year, month, day] = ev.start.date.split('-').map(Number);
+      month -= 1; // JS months are 0-indexed
+    } else {
+      const d = new Date(ev.start.dateTime);
+      year = d.getFullYear(); month = d.getMonth(); day = d.getDate();
+    }
+    const key = `${year}-${month}-${day}`;
     if (!byDay[key]) byDay[key] = [];
     byDay[key].push({
       color:   ev._calColor,
