@@ -1,166 +1,43 @@
-const DISCOVERY = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
-const SCOPE     = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.calendarlist.readonly';
+// Calendar IDs (all public, no OAuth needed)
+const CALENDARS = [
+  { id: 'agustingaute@gmail.com',                                                                          color: '#f59e0b', name: 'Personal'      },
+  { id: 'b6720a0cc1fb28d21bc25f874481e4722b2147d93e2762c65822d0e6589e3ed4@group.calendar.google.com',     color: '#60a5fa', name: 'River Content' },
+  { id: 'calendarioriverplate@gmail.com',                                                                  color: '#ef4444', name: 'River Plate'   },
+];
 
-let gapiReady = false, gisReady = false, tokenClient = null, hasToken = false;
-
-const TOKEN_KEY = 'gcal_token';
-
-function saveToken(tokenResponse) {
-  const expiry = Date.now() + (tokenResponse.expires_in - 60) * 1000;
-  localStorage.setItem(TOKEN_KEY, JSON.stringify({ token: tokenResponse.access_token, expiry }));
+async function fetchEvents(calendarId, apiKey) {
+  const now   = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+  const encId = encodeURIComponent(calendarId);
+  const url   = `https://www.googleapis.com/calendar/v3/calendars/${encId}/events`
+    + `?key=${apiKey}&timeMin=${start}&timeMax=${end}&singleEvents=true&maxResults=100&orderBy=startTime`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.items || [];
 }
 
-function loadToken() {
+async function listEvents() {
+  const apiKey = CONFIG.GOOGLE_API_KEY;
+  if (!apiKey) { showError('Falta GOOGLE_API_KEY en config.js'); return; }
+
   try {
-    const stored = JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null');
-    if (stored && stored.expiry > Date.now()) return stored.token;
-  } catch {}
-  return null;
-}
+    const results = await Promise.allSettled(
+      CALENDARS.map(cal => fetchEvents(cal.id, apiKey).then(items => ({ items, color: cal.color })))
+    );
 
-function applyToken(accessToken) {
-  gapi.client.setToken({ access_token: accessToken });
-  hasToken = true;
-}
+    const allItems = results
+      .filter(r => r.status === 'fulfilled')
+      .flatMap(r => r.value.items.map(ev => ({ ...ev, _calColor: r.value.color })));
 
-function initGapi() {
-  gapi.load('client', async () => {
-    try {
-      await gapi.client.init({ apiKey: CONFIG.GOOGLE_API_KEY, discoveryDocs: [DISCOVERY] });
-      gapiReady = true;
-      // Restore saved token into gapi client if still valid
-      const saved = loadToken();
-      if (saved) applyToken(saved);
-      tryInit();
-    } catch (e) { showError('Error Google API: ' + e.message); }
-  });
-}
-
-function initGis() {
-  if (!CONFIG.GOOGLE_CLIENT_ID) { showNoConfig(); return; }
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CONFIG.GOOGLE_CLIENT_ID,
-    scope: SCOPE,
-    callback: (r) => {
-      if (r.error) { showError('Error auth: ' + r.error); return; }
-      saveToken(r);
-      applyToken(r.access_token);
-      // Marcar que el usuario ya autorizó alguna vez
-      localStorage.setItem('gcal_authorized', '1');
-      listEvents();
-    },
-  });
-  gisReady = true;
-  tryInit();
-}
-
-// Support both: script onload fires before module, or module loads first
-window._gapiLoaded = initGapi;
-window._gisLoaded  = initGis;
-
-// If the Google scripts already loaded before this module ran, init now
-if (window.gapi) initGapi();
-if (window.google?.accounts) initGis();
-
-function tryInit() {
-  if (!gapiReady || !gisReady) return;
-  const saved = loadToken();
-  if (saved) {
-    // Token válido → cargar directo
-    listEvents();
-  } else if (localStorage.getItem('gcal_authorized')) {
-    // Ya autorizó antes pero el token expiró → pedir nuevo sin pantalla de consent
-    // prompt: '' evita pedir consent de nuevo si los scopes ya fueron otorgados
-    tokenClient.requestAccessToken({ prompt: '' });
-  } else {
-    // Primera vez → mostrar botón
-    showConnect();
-  }
-}
-
-function showNoConfig() {
-  document.getElementById('calendar-content').innerHTML = `
-    <div class="cal-connect">
-      <p class="cal-connect-text">Configurá tu Google Client ID en config.js para activar el calendario</p>
-    </div>`;
-}
-
-function showConnect() {
-  document.getElementById('calendar-content').innerHTML = `
-    <div class="cal-connect">
-      <p class="cal-connect-text">Conectá tu Google Calendar para ver tus eventos</p>
-      <button class="connect-btn" id="cal-btn">Conectar calendario</button>
-    </div>`;
-  document.getElementById('cal-btn')?.addEventListener('click', () => {
-    tokenClient.requestAccessToken({ prompt: '' });
-  });
+    renderMonthGrid(allItems, new Date());
+  } catch (e) { showError(e.message); }
 }
 
 function showError(msg) {
   document.getElementById('calendar-content').innerHTML =
     `<div class="error-state"><span>Error</span><span class="error-msg">${msg}</span></div>`;
-}
-
-// Calendarios a mostrar: nombre parcial (case-insensitive) → color del dot
-const CAL_CONFIG = [
-  { match: null,           color: '#f59e0b', key: 'primary' }, // primary = ámbar
-  { match: 'river plate',  color: '#ef4444', key: 'rp'      }, // River Plate = rojo
-  { match: 'river content',color: '#60a5fa', key: 'rc'      }, // River Content = azul
-];
-
-// Resolved calendar list: { id, color }
-let resolvedCals = [];
-
-async function getCalendars() {
-  try {
-    const r = await gapi.client.calendar.calendarList.list({ minAccessRole: 'reader' });
-    const all = r.result.items || [];
-    resolvedCals = [];
-    for (const cal of all) {
-      const name = cal.summary?.toLowerCase() || '';
-      if (cal.primary) {
-        resolvedCals.push({ id: cal.id, color: '#f59e0b' });
-      } else if (name.includes('river plate') || name.includes('riverplate')) {
-        resolvedCals.push({ id: cal.id, color: '#ef4444' });
-      } else if (name.includes('river content')) {
-        resolvedCals.push({ id: cal.id, color: '#60a5fa' });
-      }
-    }
-    if (!resolvedCals.length) resolvedCals = [{ id: 'primary', color: '#f59e0b' }];
-    return resolvedCals;
-  } catch {
-    return [{ id: 'primary', color: '#f59e0b' }];
-  }
-}
-
-async function listEvents() {
-  const now   = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1);
-  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
-  try {
-    const cals = await getCalendars();
-
-    const results = await Promise.allSettled(
-      cals.map(cal =>
-        gapi.client.calendar.events.list({
-          calendarId:   cal.id,
-          timeMin:      start.toISOString(),
-          timeMax:      end.toISOString(),
-          singleEvents: true,
-          maxResults:   100,
-          orderBy:      'startTime',
-        }).then(r => ({ items: r.result.items || [], color: cal.color }))
-      )
-    );
-
-    // Each item carries its calendar color
-    const allItems = results
-      .filter(r => r.status === 'fulfilled')
-      .flatMap(r => r.value.items.map(ev => ({ ...ev, _calColor: r.value.color })));
-
-    renderMonthGrid(allItems, now);
-  } catch (e) { showError(e.message); }
 }
 
 function renderMonthGrid(items, today) {
@@ -173,7 +50,7 @@ function renderMonthGrid(items, today) {
 
   const monthName = today.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
 
-  // Build map: key -> [{ color, title, start, end }]
+  // Build map: key -> [{ color, title, startDT, endDT, allDay }]
   const byDay = {};
   items.forEach(ev => {
     const raw = ev.start.date || ev.start.dateTime;
@@ -181,8 +58,8 @@ function renderMonthGrid(items, today) {
     const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
     if (!byDay[key]) byDay[key] = [];
     byDay[key].push({
-      color: ev._calColor,
-      title: ev.summary || '',
+      color:   ev._calColor,
+      title:   ev.summary || '',
       startDT: ev.start.dateTime || null,
       endDT:   ev.end?.dateTime   || null,
       allDay:  !!ev.start.date && !ev.start.dateTime,
@@ -206,15 +83,12 @@ function renderMonthGrid(items, today) {
     const isToday = day === todayDate;
     const isPast  = day < todayDate;
 
-    // Progressive shade: day 1 → ~0.02, day 31 → ~0.09 (linear ramp)
     const shade = (0.02 + (day - 1) / (daysInMonth - 1) * 0.07).toFixed(4);
     const shadeStyle = `--day-shade: rgba(0,0,0,${shade})`;
 
-    // Show up to 3 event pills with short label, then "+N más"
     const maxPills = 3;
     const pills = events.slice(0, maxPills).map(ev => {
       const label = ev.title.split(' ').slice(0, 3).join(' ') || '•';
-      // Build time string for tooltip
       let timeStr = '';
       if (ev.startDT) {
         const fmt = t => new Date(t).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
@@ -240,13 +114,9 @@ function renderMonthGrid(items, today) {
       </div>`;
   }
 
-  // Build legend from resolved cals
-  const legendItems = resolvedCals.map(c => {
-    const name = c.color === '#f59e0b' ? 'Personal'
-      : c.color === '#ef4444' ? 'River Plate'
-      : 'River Content';
-    return `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${name}</span>`;
-  }).join('');
+  const legendItems = CALENDARS.map(c =>
+    `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
+  ).join('');
 
   el.innerHTML = `
     <div class="mcal-header">
@@ -259,12 +129,14 @@ function renderMonthGrid(items, today) {
     </div>`;
 }
 
+// Load on startup
+listEvents();
+
 export function refreshCalendar() {
-  if (!CONFIG.GOOGLE_CLIENT_ID || !CONFIG.GOOGLE_API_KEY) { showNoConfig(); return; }
-  if (gapiReady && gisReady && hasToken) listEvents();
+  listEvents();
 }
 
-// ── Tooltip global (fixed en body para evitar overflow:hidden) ──
+// ── Tooltip global ──
 const tip = document.createElement('div');
 tip.id = 'cal-tooltip';
 document.body.appendChild(tip);
@@ -280,17 +152,14 @@ document.addEventListener('mouseover', e => {
 
 document.addEventListener('mousemove', e => {
   if (tip.style.display === 'none') return;
-  const x = e.clientX;
-  const y = e.clientY;
   const tw = tip.offsetWidth;
   const th = tip.offsetHeight;
   const vw = window.innerWidth;
-  // Posicionar encima del cursor, ajustando si se sale de la pantalla
-  let left = x - tw / 2;
+  let left = e.clientX - tw / 2;
   if (left < 6) left = 6;
   if (left + tw > vw - 6) left = vw - tw - 6;
   tip.style.left = left + 'px';
-  tip.style.top  = (y - th - 12) + 'px';
+  tip.style.top  = (e.clientY - th - 12) + 'px';
 });
 
 document.addEventListener('mouseout', e => {
