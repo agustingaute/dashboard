@@ -14,9 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate config.js from secrets
+      - name: Prepare deploy directory
         run: |
-          cat > config.js << EOF
+          mkdir _deploy
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_deploy' --exclude='*.md' --exclude='config.example.js' --exclude='.gitignore' --exclude='.DS_Store' . _deploy/
+          cat > _deploy/config.js << EOF
           window.CONFIG = {
             GOOGLE_CLIENT_ID: '${{ secrets.GOOGLE_CLIENT_ID }}',
             GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}',
@@ -30,6 +32,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./_deploy
           publish_branch: gh-pages
-          exclude_assets: '.github,*.md,config.example.js,.gitignore'
