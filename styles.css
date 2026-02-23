@@ -616,8 +616,8 @@ body::before {
 
 .standings-table thead th {
   text-align: left;
-  padding: 0 6px clamp(4px, 0.8vh, 8px);
-  font-size: clamp(7px, 0.9vh, 9px);
+  padding: 0 6px clamp(6px, 1.2vh, 12px);
+  font-size: clamp(8px, 1vh, 10px);
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -651,15 +651,15 @@ body::before {
 .standings-table tbody tr.is-river td.pts  { color: var(--red) !important; }
 
 .standings-table tbody td {
-  padding: clamp(2px, 0.7vh, 7px) 6px;
+  padding: clamp(4px, 1.1vh, 11px) 6px;
   color: var(--txt-mid);
-  font-size: clamp(9px, 1.2vh, 12px);
+  font-size: clamp(10px, 1.4vh, 14px);
 }
 .standings-table tbody td.num {
   text-align: center;
   width: 30px;
   font-weight: 600;
-  font-size: clamp(9px, 1.1vh, 11px);
+  font-size: clamp(10px, 1.3vh, 13px);
   font-variant-numeric: tabular-nums;
 }
 .standings-table tbody td.pos {
@@ -667,13 +667,13 @@ body::before {
   width: 26px;
   text-align: center;
   color: var(--txt-dim);
-  font-size: clamp(9px, 1.1vh, 11px);
+  font-size: clamp(10px, 1.3vh, 13px);
 }
 .standings-table tbody td.team { font-weight: 500; color: var(--txt); text-transform: uppercase; letter-spacing: 0.04em; }
 .standings-table tbody td.pts  {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
-  font-size: clamp(12px, 1.6vh, 17px);
+  font-size: clamp(14px, 2vh, 22px);
   color: var(--txt);
 }
 
@@ -757,6 +757,7 @@ body::before {
   border-color: var(--border-hi);
 }
 .mcal-cell--empty { background: transparent !important; pointer-events: none; }
+.mcal-cell--next-month { opacity: 0.30; pointer-events: none; }
 .mcal-cell--today {
   background: rgba(232,37,58,0.06) !important;
   border-color: rgba(232,37,58,0.22) !important;
