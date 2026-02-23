@@ -8,24 +8,24 @@
 /* Space Grotesk    : labels, body, tablas         */
 
 :root {
-  /* Base — negros/grises puros, sin tinte azul */
-  --bg:         #0A0A0A;
-  --bg-card:    #141414;
-  --bg-hover:   #1C1C1C;
-  --border:     rgba(255,255,255,0.08);
-  --border-hi:  rgba(255,255,255,0.16);
+  /* Base — grises medios, contraste suavizado */
+  --bg:         #0D0D0D;
+  --bg-card:    #262626;
+  --bg-hover:   #2F2F2F;
+  --border:     rgba(255,255,255,0.09);
+  --border-hi:  rgba(255,255,255,0.18);
 
   /* Texto (sobre cards oscuras) */
-  --txt:        #F2F2F2;
-  --txt-mid:    rgba(242,242,242,0.50);
-  --txt-dim:    rgba(242,242,242,0.26);
+  --txt:        #E8E8E8;
+  --txt-mid:    rgba(232,232,232,0.50);
+  --txt-dim:    rgba(232,232,232,0.26);
 
   /* Cards claras — variables override locales */
-  --card-light-bg:    #F4F4F4;
-  --card-light-txt:   #0A0A0A;
-  --card-light-mid:   rgba(10,10,10,0.50);
-  --card-light-dim:   rgba(10,10,10,0.28);
-  --card-light-border:rgba(0,0,0,0.08);
+  --card-light-bg:    #E2E2E2;
+  --card-light-txt:   #181818;
+  --card-light-mid:   rgba(24,24,24,0.50);
+  --card-light-dim:   rgba(24,24,24,0.30);
+  --card-light-border:rgba(0,0,0,0.10);
 
   /* Acentos — rojo River como protagonista, sin cyan */
   --cyan:       #E8253A;
@@ -234,7 +234,7 @@ body::before {
   --txt-dim:  var(--card-light-dim);
   --border:   var(--card-light-border);
   --border-hi:rgba(0,0,0,0.16);
-  --bg-hover: #EBEBEB;
+  --bg-hover: #D8D8D8;
 }
 .cell--dollar:hover,
 .cell--crypto:hover,
@@ -752,8 +752,8 @@ body::before {
 }
 .mcal-cell--empty { background: transparent !important; pointer-events: none; }
 .mcal-cell--today {
-  background: rgba(0,212,255,0.05) !important;
-  border-color: rgba(0,212,255,0.2) !important;
+  background: rgba(232,37,58,0.06) !important;
+  border-color: rgba(232,37,58,0.22) !important;
 }
 
 .mcal-num {
