@@ -20,7 +20,6 @@ jobs:
           window.CONFIG = {
             GOOGLE_CLIENT_ID: '${{ secrets.GOOGLE_CLIENT_ID }}',
             GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}',
-            FOOTBALL_API_KEY: '${{ secrets.FOOTBALL_API_KEY }}',
             RIVER_PLATE_TEAM_ID: 435,
             LIGA_PROFESIONAL_LEAGUE_ID: 128,
             FOOTBALL_SEASON: 2024,
