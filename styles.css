@@ -501,7 +501,7 @@ body::before {
   color: var(--txt-mid);
   line-height: 0;
 }
-.weather-icon svg { width: 32px; height: 32px; }
+.weather-icon svg { width: clamp(32px, 4vh, 46px); height: clamp(32px, 4vh, 46px); }
 
 .weather-temp {
   font-family: 'Barlow Condensed', sans-serif;
