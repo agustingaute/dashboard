@@ -14,27 +14,27 @@ export async function refreshCrypto() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { bitcoin: btc, ethereum: eth } = await res.json();
 
-    const row = (badgeClass, badge, name, price, change) => {
-      const noteClass = change >= 0 ? 'pos' : 'neg';
+    const row = (tickerClass, ticker, name, price, change) => {
+      const changeClass = change >= 0 ? 'pos' : 'neg';
       const sign = change >= 0 ? '+' : '';
       return `
-        <div class="data-row">
-          <div class="data-left">
-            <span class="badge ${badgeClass}">${badge}</span>
-            <span class="data-label">${name}</span>
+        <div class="crypto-row">
+          <div class="crypto-left">
+            <span class="crypto-ticker ${tickerClass}">${ticker}</span>
+            <span class="crypto-name">${name}</span>
           </div>
-          <div class="data-right">
-            <span class="data-value">${usd(price)}</span>
-            <span class="data-note ${noteClass}">${sign}${change.toFixed(2)}%</span>
+          <div class="crypto-right">
+            <span class="crypto-value">${usd(price)}</span>
+            <span class="crypto-change ${changeClass}">${sign}${change.toFixed(2)}%</span>
           </div>
         </div>
       `;
     };
 
     document.getElementById('crypto-content').innerHTML = `
-      <div class="data-list">
-        ${row('badge--btc', 'BTC', 'Bitcoin',  btc.usd, btc.usd_24h_change)}
-        ${row('badge--eth', 'ETH', 'Ethereum', eth.usd, eth.usd_24h_change)}
+      <div class="crypto-grid">
+        ${row('crypto-ticker--btc', 'BTC', 'Bitcoin',  btc.usd, btc.usd_24h_change)}
+        ${row('crypto-ticker--eth', 'ETH', 'Ethereum', eth.usd, eth.usd_24h_change)}
       </div>
     `;
   } catch (err) {
