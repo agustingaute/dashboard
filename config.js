@@ -1,0 +1,7 @@
+window.CONFIG = {
+  GOOGLE_CLIENT_ID: '51750856107-c76brui9a7bid7tmm6o03a0ap515c0h0.apps.googleusercontent.com',
+  GOOGLE_API_KEY: 'AIzaSyB-I0Uu7a4PxN9WzRk6wyub4xuy0agqJaQ',
+  RIVER_PLATE_TEAM_ID: 435,
+  LIGA_PROFESIONAL_LEAGUE_ID: 128,
+  FOOTBALL_SEASON: 2024,
+};
