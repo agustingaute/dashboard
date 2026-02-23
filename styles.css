@@ -227,23 +227,24 @@ body::before {
 }
 .cell:hover { border-color: var(--border-hi); }
 
-/* Top accent line — solo visible en hover, siempre rojo */
+/* Top accent line — solo visible en hover */
 .cell::before {
   content: '';
   position: absolute;
   top: 0; left: 16px; right: 16px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c41230, transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
-.cell:hover::before { opacity: 0.7; }
+/* Cards oscuras: sutil para que no parezca naranja */
+.cell:hover::before { opacity: 0.45; }
 
-/* Cards claras: accent más visible */
+/* Cards claras: rojo oscuro visible sobre fondo #E2E2E2 */
 .cell--dollar:hover::before,
 .cell--crypto:hover::before,
 .cell--weather:hover::before,
-.cell--calendar:hover::before { opacity: 1; }
+.cell--calendar:hover::before { opacity: 0.85; }
 
 /* ── Light accent cards: dólar, cripto, clima, calendario ── */
 .cell--dollar,
