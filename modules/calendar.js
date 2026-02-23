@@ -142,7 +142,7 @@ function renderMonthGrid(items, today) {
         <span class="mcal-event-label">${label}</span>
       </div>`;
     }).join('');
-    cells += `<div class="mcal-cell mcal-cell--next-month">
+    cells += `<div class="mcal-cell mcal-cell--next-month" style="--day-shade: rgba(0,0,0,0.18)">
       <span class="mcal-num">${i}</span>
       <div class="mcal-events">${pills}</div>
     </div>`;

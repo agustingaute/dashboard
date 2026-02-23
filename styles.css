@@ -800,7 +800,7 @@ body::before {
   border-color: var(--border-hi);
 }
 .mcal-cell--empty { background: transparent !important; pointer-events: none; }
-.mcal-cell--next-month { opacity: 0.50; }
+.mcal-cell--next-month { opacity: 1; }
 .mcal-cell--today {
   background: rgba(232,37,58,0.06) !important;
   border-color: rgba(232,37,58,0.22) !important;
