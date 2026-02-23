@@ -181,7 +181,7 @@ body::before {
 .cell--weather   { grid-column: 3; grid-row: 1; }
 .cell--fixtures  { grid-column: 1; grid-row: 2; }
 .cell--standings { grid-column: 2 / 4; grid-row: 2; }
-.cell--standings .cell__body { overflow: hidden; justify-content: flex-start; }
+.cell--standings .cell__body { overflow: hidden; }
 .cell--calendar  { grid-column: 1 / 4; grid-row: 3; }
 
 /* ============================================================
@@ -610,13 +610,15 @@ body::before {
 
 .standings-table {
   width: 100%;
+  height: 100%;
   border-collapse: collapse;
   font-size: 11.5px;
+  table-layout: fixed;
 }
 
 .standings-table thead th {
   text-align: left;
-  padding: 0 6px clamp(4px, 0.8vh, 8px);
+  padding: 0 6px 1%;
   font-size: clamp(8px, 0.9vh, 10px);
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -629,6 +631,7 @@ body::before {
 .standings-table tbody tr {
   border-bottom: 1px solid var(--border);
   transition: background 0.12s;
+  height: 1%;  /* triggers equal row distribution when table height:100% */
 }
 .standings-table tbody tr:last-child { border-bottom: none; }
 .standings-table tbody tr:has(+ .standings-sep) { border-bottom: none; }
@@ -651,15 +654,16 @@ body::before {
 .standings-table tbody tr.is-river td.pts  { color: var(--red) !important; }
 
 .standings-table tbody td {
-  padding: clamp(3px, 0.85vh, 9px) 6px;
+  padding: 0 6px;
   color: var(--txt-mid);
-  font-size: clamp(10px, 1.25vh, 13px);
+  font-size: clamp(10px, 1.25vh, 14px);
+  vertical-align: middle;
 }
 .standings-table tbody td.num {
   text-align: center;
   width: 30px;
   font-weight: 600;
-  font-size: clamp(10px, 1.15vh, 12px);
+  font-size: clamp(10px, 1.15vh, 13px);
   font-variant-numeric: tabular-nums;
 }
 .standings-table tbody td.pos {
@@ -667,13 +671,13 @@ body::before {
   width: 26px;
   text-align: center;
   color: var(--txt-dim);
-  font-size: clamp(10px, 1.15vh, 12px);
+  font-size: clamp(10px, 1.15vh, 13px);
 }
 .standings-table tbody td.team { font-weight: 500; color: var(--txt); text-transform: uppercase; letter-spacing: 0.04em; }
 .standings-table tbody td.pts  {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
-  font-size: clamp(13px, 1.7vh, 19px);
+  font-size: clamp(13px, 1.8vh, 21px);
   color: var(--txt);
 }
 
