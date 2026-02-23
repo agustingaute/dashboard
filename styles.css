@@ -232,12 +232,18 @@ body::before {
   content: '';
   position: absolute;
   top: 0; left: 16px; right: 16px;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(90deg, transparent, var(--red), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
-.cell:hover::before { opacity: 0.5; }
+.cell:hover::before { opacity: 0.7; }
+
+/* Cards claras: accent más visible */
+.cell--dollar:hover::before,
+.cell--crypto:hover::before,
+.cell--weather:hover::before,
+.cell--calendar:hover::before { opacity: 1; }
 
 /* ── Light accent cards: dólar, cripto, clima, calendario ── */
 .cell--dollar,
@@ -495,7 +501,7 @@ body::before {
   color: var(--txt-mid);
   line-height: 0;
 }
-.weather-icon svg { width: clamp(32px, 4vh, 46px); height: clamp(32px, 4vh, 46px); }
+.weather-icon svg { width: clamp(40px, 5.5vh, 58px); height: clamp(40px, 5.5vh, 58px); }
 
 .weather-temp {
   font-family: 'Barlow Condensed', sans-serif;
