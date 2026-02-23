@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body class="app">
+
+  <header class="header">
+    <span id="clock" class="clock"></span>
+    <span id="date-display" class="date"></span>
+  </header>
+
+  <main class="layout">
+
+    <!-- Fila 1: Clima / Dólar / Cripto -->
+    <div class="row row--top">
+      <div class="card card--weather">
+        <div class="card-label">Clima</div>
+        <div class="card-body" id="weather-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+      <div class="card card--dollar">
+        <div class="card-label">Dólar Blue</div>
+        <div class="card-body" id="dollar-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+      <div class="card card--crypto">
+        <div class="card-label">Cripto</div>
+        <div class="card-body" id="crypto-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 2: Fixtures (izquierda) / Tabla de posiciones (derecha) -->
+    <div class="row row--mid">
+      <div class="card card--fixtures">
+        <div class="card-label">River Plate — Próximos</div>
+        <div class="card-body" id="fixtures-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+      <div class="card card--standings">
+        <div class="card-label">Liga Profesional</div>
+        <div class="card-body" id="standings-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 3: Calendario (ancho completo) -->
+    <div class="row row--cal">
+      <div class="card card--calendar">
+        <div class="card-label">Calendario</div>
+        <div class="card-body" id="calendar-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="config.js"></script>
+
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate config.js from secrets
+        run: |
+          cat > config.js << EOF
+          window.CONFIG = {
+            GOOGLE_CLIENT_ID: '${{ secrets.GOOGLE_CLIENT_ID }}',
+            GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}',
+            RIVER_PLATE_TEAM_ID: 435,
+            LIGA_PROFESIONAL_LEAGUE_ID: 128,
+            FOOTBALL_SEASON: 2024,
+          };
+          EOF
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          exclude_assets: '.github,*.md,config.example.js,.gitignore'
