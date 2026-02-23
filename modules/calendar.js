@@ -121,12 +121,22 @@ function renderMonthGrid(items, today) {
       </div>`;
   }
 
+  // Fill trailing cells with next month's days
+  const totalRows  = Math.max(6, Math.ceil((firstWeekday + daysInMonth) / 7));
+  const totalCells = totalRows * 7;
+  const usedCells  = firstWeekday + daysInMonth;
+  for (let i = 1; i <= totalCells - usedCells; i++) {
+    cells += `<div class="mcal-cell mcal-cell--next-month">
+      <span class="mcal-num">${i}</span>
+      <div class="mcal-events"></div>
+    </div>`;
+  }
+
   const legendItems = CALENDARS.map(c =>
     `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
   ).join('');
 
-  const totalRows = Math.ceil((firstWeekday + daysInMonth) / 7);
-  const gridRows  = `18px repeat(${totalRows}, 1fr)`;
+  const gridRows = `18px repeat(${totalRows}, 1fr)`;
 
   el.innerHTML = `
     <div class="mcal-header">
