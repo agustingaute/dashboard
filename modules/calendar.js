@@ -8,7 +8,8 @@ const CALENDARS = [
 async function fetchEvents(calendarId, apiKey) {
   const now   = new Date();
   const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+  // Extend to cover trailing cells of next month (up to 6 extra days)
+  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 6, 23, 59, 59).toISOString();
   const encId = encodeURIComponent(calendarId);
   const url   = `https://www.googleapis.com/calendar/v3/calendars/${encId}/events`
     + `?key=${apiKey}&timeMin=${start}&timeMax=${end}&singleEvents=true&maxResults=100&orderBy=startTime`;
@@ -125,10 +126,25 @@ function renderMonthGrid(items, today) {
   const totalRows  = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
   const totalCells = totalRows * 7;
   const usedCells  = firstWeekday + daysInMonth;
+  const nextMonth  = month === 11 ? 0 : month + 1;
+  const nextYear   = month === 11 ? year + 1 : year;
   for (let i = 1; i <= totalCells - usedCells; i++) {
+    const key    = `${nextYear}-${nextMonth}-${i}`;
+    const events = byDay[key] || [];
+    const pills  = events.slice(0, 3).map(ev => {
+      const label   = ev.title.split(' ').slice(0, 3).join(' ') || '•';
+      const timeStr = ev.startDT
+        ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        : 'Todo el día';
+      const tooltip = `${ev.title}\n${timeStr}`;
+      return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
+        <span class="mcal-event-dot" style="background:${ev.color}"></span>
+        <span class="mcal-event-label">${label}</span>
+      </div>`;
+    }).join('');
     cells += `<div class="mcal-cell mcal-cell--next-month">
       <span class="mcal-num">${i}</span>
-      <div class="mcal-events"></div>
+      <div class="mcal-events">${pills}</div>
     </div>`;
   }
 
