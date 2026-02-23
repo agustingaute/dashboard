@@ -72,9 +72,9 @@ function rowHTML(label, current) {
         <span class="weather-icon">${getIcon(current.weather_code)}</span>
         <span class="weather-place">${label}</span>
       </div>
-      <div style="text-align:right">
+      <div class="weather-right">
         <span class="weather-temp">${temp}°</span>
-        <div class="weather-note">${desc} · ${hum}% · ${wind}km/h</div>
+        <span class="weather-note">${desc} · ${hum}% · ${wind}km/h</span>
       </div>
     </div>
   `;

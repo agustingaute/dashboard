@@ -265,33 +265,34 @@ body::before {
 .dollar-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-around;
+  flex: 1;
   animation: fadeUp 0.4s ease both;
 }
 
 .dollar-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px;
-  background: var(--bg);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
+.dollar-row:last-child { border-bottom: none; }
 
 .dollar-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--txt-mid);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
 }
 
 .dollar-value {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(22px, 2.2vw, 32px);
+  font-size: clamp(26px, 2.4vw, 36px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--txt);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -303,7 +304,8 @@ body::before {
 .crypto-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-around;
+  flex: 1;
   animation: fadeUp 0.4s ease both;
 }
 
@@ -312,11 +314,10 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
-  background: var(--bg);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
+.crypto-row:last-child { border-bottom: none; }
 
 .crypto-left {
   display: flex;
@@ -334,14 +335,14 @@ body::before {
   text-transform: uppercase;
 }
 .crypto-ticker--btc {
-  background: rgba(255,152,0,0.12);
+  background: rgba(255,152,0,0.15);
   color: var(--orange);
-  border: 1px solid rgba(255,152,0,0.2);
+  border: 1px solid rgba(255,152,0,0.25);
 }
 .crypto-ticker--eth {
-  background: rgba(124,77,255,0.12);
+  background: rgba(124,77,255,0.15);
   color: var(--purple);
-  border: 1px solid rgba(124,77,255,0.2);
+  border: 1px solid rgba(124,77,255,0.25);
 }
 
 .crypto-name {
@@ -352,27 +353,27 @@ body::before {
 
 .crypto-right {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
 }
 
 .crypto-value {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(18px, 1.8vw, 26px);
+  font-size: clamp(20px, 1.9vw, 28px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--txt);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .crypto-change {
-  font-family: 'Space Grotesk', monospace;
   font-size: 10px;
   font-weight: 700;
   white-space: nowrap;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 .crypto-change.pos {
   color: var(--green);
@@ -389,7 +390,8 @@ body::before {
 .weather-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-around;
+  flex: 1;
   animation: fadeUp 0.4s ease both;
 }
 
@@ -398,22 +400,21 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 10px;
-  background: var(--bg);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
+.weather-row:last-child { border-bottom: none; }
 
 .weather-left {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--txt-mid);
   min-width: 0;
 }
 
 .weather-place {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--txt-mid);
   white-space: nowrap;
@@ -421,14 +422,19 @@ body::before {
   text-overflow: ellipsis;
 }
 
+.weather-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
 .weather-temp {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(22px, 2.2vw, 32px);
+  font-size: clamp(26px, 2.4vw, 36px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--txt);
   line-height: 1;
-  white-space: nowrap;
+  display: block;
 }
 
 .weather-note {
@@ -436,7 +442,8 @@ body::before {
   font-weight: 500;
   color: var(--txt-dim);
   white-space: nowrap;
-  text-align: right;
+  display: block;
+  margin-top: 2px;
 }
 
 /* ============================================================
