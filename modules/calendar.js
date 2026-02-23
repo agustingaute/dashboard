@@ -154,9 +154,7 @@ export function refreshCalendar() {
 }
 
 // ── Tooltip global ──
-const tip = document.createElement('div');
-tip.id = 'cal-tooltip';
-document.body.appendChild(tip);
+const tip = document.getElementById('cal-tooltip');
 
 document.addEventListener('mouseover', e => {
   const pill = e.target.closest('.mcal-event-pill[data-tooltip]');
