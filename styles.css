@@ -48,13 +48,14 @@ html { height: 100%; }
 
 body {
   height: 100vh;
+  max-height: 100vh;
   font-family: 'Space Grotesk', system-ui, sans-serif;
   background: var(--bg);
   color: var(--txt);
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* Subtle background grid lines */
@@ -157,9 +158,10 @@ body::before {
    ============================================================ */
 .grid {
   flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1.6fr 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: 1.4fr 2.6fr 3fr;
   gap: var(--gap);
   padding: var(--gap);
   position: relative;
@@ -172,6 +174,7 @@ body::before {
 .cell--weather   { grid-column: 3; grid-row: 1; }
 .cell--fixtures  { grid-column: 1; grid-row: 2; }
 .cell--standings { grid-column: 2 / 4; grid-row: 2; }
+.cell--standings .cell__body { overflow: hidden; }
 .cell--calendar  { grid-column: 1 / 4; grid-row: 3; }
 
 /* ============================================================
@@ -187,6 +190,8 @@ body::before {
   gap: 10px;
   position: relative;
   overflow: hidden;
+  min-height: 0;
+  min-width: 0;
   transition: border-color 0.2s;
 }
 .cell:hover { border-color: var(--border-hi); }
@@ -275,31 +280,30 @@ body::before {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
-  padding: 0 16px 0 0;
+  gap: 8px;
+  padding: 0 20px 0 0;
   border-right: 1px solid var(--border);
 }
 .dollar-row:last-child {
   border-right: none;
-  padding: 0 0 0 16px;
+  padding: 0 0 0 20px;
 }
 
 .dollar-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cyan);
-  opacity: 0.7;
+  color: var(--txt);
 }
 
 .dollar-value {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(34px, 3.2vw, 52px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(20px, 3.5vh, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--txt);
-  line-height: 0.9;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
@@ -311,7 +315,7 @@ body::before {
   flex-direction: column;
   justify-content: space-around;
   flex: 1;
-  gap: 4px;
+  gap: 0;
   animation: fadeUp 0.4s ease both;
 }
 
@@ -319,42 +323,33 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
+  min-height: 0;
   border-bottom: 1px solid var(--border);
 }
 .crypto-row:last-child { border-bottom: none; }
 
 .crypto-left {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
 }
 
 .crypto-ticker {
-  font-size: 9px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.14em;
-  padding: 4px 8px;
-  border-radius: 4px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   flex-shrink: 0;
 }
-.crypto-ticker--btc {
-  background: rgba(255,152,0,0.15);
-  color: var(--orange);
-  border: 1px solid rgba(255,152,0,0.3);
-}
-.crypto-ticker--eth {
-  background: rgba(124,77,255,0.15);
-  color: var(--purple);
-  border: 1px solid rgba(124,77,255,0.3);
-}
+.crypto-ticker--btc { color: var(--orange); }
+.crypto-ticker--eth { color: var(--purple); }
 
 .crypto-name {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 400;
   color: var(--txt-mid);
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -362,16 +357,18 @@ body::before {
 
 .crypto-right {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .crypto-value {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(24px, 2.3vw, 36px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(16px, 2.8vh, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--txt);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -379,16 +376,12 @@ body::before {
 
 .crypto-change {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
-  padding: 3px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-  min-width: 56px;
-  text-align: center;
+  letter-spacing: 0.01em;
 }
-.crypto-change.pos { color: var(--green); background: var(--green-dim); }
-.crypto-change.neg { color: var(--red);   background: var(--red-dim);   }
+.crypto-change.pos { color: var(--green); }
+.crypto-change.neg { color: var(--red);   }
 
 /* ============================================================
    CLIMA — temperatura dominante, lugar como contexto
@@ -398,7 +391,7 @@ body::before {
   flex-direction: column;
   justify-content: space-around;
   flex: 1;
-  gap: 4px;
+  gap: 0;
   animation: fadeUp 0.4s ease both;
 }
 
@@ -408,6 +401,7 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-height: 0;
   border-bottom: 1px solid var(--border);
 }
 .weather-row:last-child { border-bottom: none; }
@@ -415,44 +409,50 @@ body::before {
 .weather-left {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
+  gap: 5px;
   min-width: 0;
 }
 
-.weather-icon { color: var(--txt-mid); }
-
 .weather-place {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--txt);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.weather-right {
-  text-align: right;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.weather-temp {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(36px, 3.4vw, 54px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--txt);
-  line-height: 0.9;
+  letter-spacing: 0.01em;
 }
 
 .weather-note {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--txt-mid);
   white-space: nowrap;
   letter-spacing: 0.01em;
+}
+
+.weather-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.weather-icon {
+  color: var(--txt-mid);
+  line-height: 0;
+}
+.weather-icon svg { width: 32px; height: 32px; }
+
+.weather-temp {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(20px, 3.5vh, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--txt);
+  line-height: 1;
 }
 
 /* ============================================================
@@ -495,13 +495,17 @@ body::before {
 .fixture-list {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .fixture-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
+  flex: 1;
+  min-height: 0;
+  padding: 0;
   border-bottom: 1px solid var(--border);
   gap: 10px;
   animation: fadeUp 0.4s ease both;
@@ -515,7 +519,7 @@ body::before {
 .fixture-row:nth-child(6) { animation-delay: 0.24s; }
 
 .fixture-match {
-  font-size: 13px;
+  font-size: clamp(10px, 1.4vh, 14px);
   font-weight: 600;
   color: var(--txt);
   flex: 1;
@@ -540,14 +544,14 @@ body::before {
 .fixture-when { text-align: right; flex-shrink: 0; }
 .fixture-date {
   display: block;
-  font-size: 11px;
+  font-size: clamp(9px, 1.2vh, 12px);
   font-weight: 600;
   color: var(--txt-mid);
   font-variant-numeric: tabular-nums;
 }
 .fixture-time {
   display: block;
-  font-size: 10px;
+  font-size: clamp(8px, 1.1vh, 11px);
   font-weight: 500;
   color: var(--txt-dim);
   margin-top: 2px;
@@ -557,13 +561,14 @@ body::before {
 /* ============================================================
    STANDINGS
    ============================================================ */
-.standings-zone {
-  font-size: 7.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+.standings-zone-inline {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--txt-dim);
-  margin-bottom: 8px;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 .standings-table {
@@ -574,8 +579,8 @@ body::before {
 
 .standings-table thead th {
   text-align: left;
-  padding: 0 6px 7px;
-  font-size: 8px;
+  padding: 0 6px clamp(4px, 0.8vh, 8px);
+  font-size: clamp(7px, 0.9vh, 9px);
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -589,7 +594,16 @@ body::before {
   transition: background 0.12s;
 }
 .standings-table tbody tr:last-child { border-bottom: none; }
+.standings-table tbody tr:has(+ .standings-sep) { border-bottom: none; }
 .standings-table tbody tr:hover { background: var(--bg-hover); }
+
+.standings-sep td {
+  padding: 0 !important;
+  height: 0;
+  border: none !important;
+  border-top: 2px solid rgba(255,255,255,0.18) !important;
+}
+.standings-sep + tr td { padding-top: clamp(4px, 0.7vh, 7px); }
 
 .standings-table tbody tr.is-river {
   background: var(--red-dim);
@@ -600,15 +614,15 @@ body::before {
 .standings-table tbody tr.is-river td.pts  { color: var(--red) !important; }
 
 .standings-table tbody td {
-  padding: 5px 6px;
+  padding: clamp(2px, 0.7vh, 7px) 6px;
   color: var(--txt-mid);
-  font-size: 11.5px;
+  font-size: clamp(9px, 1.2vh, 12px);
 }
 .standings-table tbody td.num {
   text-align: center;
   width: 30px;
   font-weight: 600;
-  font-size: 10px;
+  font-size: clamp(9px, 1.1vh, 11px);
   font-variant-numeric: tabular-nums;
 }
 .standings-table tbody td.pos {
@@ -616,13 +630,13 @@ body::before {
   width: 26px;
   text-align: center;
   color: var(--txt-dim);
-  font-size: 10px;
+  font-size: clamp(9px, 1.1vh, 11px);
 }
 .standings-table tbody td.team { font-weight: 500; color: var(--txt); }
 .standings-table tbody td.pts  {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: clamp(11px, 1.5vh, 15px);
   color: var(--txt);
 }
 
@@ -674,6 +688,7 @@ body::before {
   grid-auto-rows: 1fr;
   gap: 2px;
   flex: 1;
+  min-height: 0;
 }
 
 .mcal-dow {
@@ -688,7 +703,7 @@ body::before {
 }
 
 .mcal-cell {
-  min-height: 64px;
+  min-height: 0;
   padding: 5px 5px 4px;
   border-radius: var(--r-sm);
   display: flex;

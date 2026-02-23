@@ -14,14 +14,13 @@ export async function refreshCrypto() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { bitcoin: btc, ethereum: eth } = await res.json();
 
-    const row = (tickerClass, ticker, name, price, change) => {
+    const row = (tickerClass, ticker, price, change) => {
       const changeClass = change >= 0 ? 'pos' : 'neg';
       const sign = change >= 0 ? '+' : '';
       return `
         <div class="crypto-row">
           <div class="crypto-left">
             <span class="crypto-ticker ${tickerClass}">${ticker}</span>
-            <span class="crypto-name">${name}</span>
           </div>
           <div class="crypto-right">
             <span class="crypto-value">${usd(price)}</span>
@@ -33,8 +32,8 @@ export async function refreshCrypto() {
 
     document.getElementById('crypto-content').innerHTML = `
       <div class="crypto-grid">
-        ${row('crypto-ticker--btc', 'BTC', 'Bitcoin',  btc.usd, btc.usd_24h_change)}
-        ${row('crypto-ticker--eth', 'ETH', 'Ethereum', eth.usd, eth.usd_24h_change)}
+        ${row('crypto-ticker--btc', 'BTC', btc.usd, btc.usd_24h_change)}
+        ${row('crypto-ticker--eth', 'ETH', eth.usd, eth.usd_24h_change)}
       </div>
     `;
   } catch (err) {

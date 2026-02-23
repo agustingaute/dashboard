@@ -71,14 +71,23 @@ function renderStandings(groups) {
     return;
   }
 
-  const top = allRows.slice(0, 10);
   const rIdx = allRows.findIndex(r => r.entity?.object?.id === RIVER_ID);
-  if (rIdx >= 10) top.push(allRows[rIdx]);
 
-  const rows = top.map(row => {
+  // Bloque: líder (pos 0) + 3 por encima de River + River + 3 por debajo
+  const winStart = Math.max(1, rIdx - 3); // índice 1+ para no repetir el líder
+  const winEnd   = Math.min(allRows.length - 1, rIdx + 3);
+
+  // Si el bloque ya incluye la posición 0 (líder adyacente a River), no hay gap
+  const gapBeforeWindow = winStart > 1;
+
+  // Armar el set de índices únicos: siempre incluir el 0 (líder)
+  const selected = [allRows[0], ...allRows.slice(winStart, winEnd + 1)];
+
+  const renderRow = (row, separator = false) => {
     const isRiver = row.entity?.object?.id === RIVER_ID;
     const name = row.entity?.object?.short_name || '?';
     return `
+      ${separator ? '<tr class="standings-sep"><td colspan="7"></td></tr>' : ''}
       <tr class="${isRiver ? 'is-river' : ''}">
         <td class="pos">${row.num}</td>
         <td class="team">${name}</td>
@@ -89,10 +98,15 @@ function renderStandings(groups) {
         <td class="num pts">${getValue(row, 'Points')}</td>
       </tr>
     `;
-  }).join('');
+  };
+
+  const rows = selected.map((row, i) => renderRow(row, i === 1 && gapBeforeWindow)).join('');
+
+  // Merge zone name into the card label to save vertical space
+  const labelEl = document.querySelector('.cell--standings .cell__label');
+  if (labelEl) labelEl.innerHTML = `Liga Profesional <span class="standings-zone-inline">${zoneName.replace(/^Liga Profesional\s*·?\s*/i, '')}</span>`;
 
   el.innerHTML = `
-    <div class="standings-zone">${zoneName}</div>
     <table class="standings-table">
       <thead>
         <tr>
