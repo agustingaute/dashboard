@@ -11,24 +11,14 @@ export async function refreshDollar() {
     const { compra, venta, fechaActualizacion } = await res.json();
 
     document.getElementById('dollar-content').innerHTML = `
-      <div class="data-list">
-        <div class="data-row">
-          <div class="data-left">
-            <span class="badge badge--usd">USD</span>
-            <span class="data-label">Compra</span>
-          </div>
-          <div class="data-right">
-            <span class="data-value">${ars(compra)}</span>
-          </div>
+      <div class="dollar-grid">
+        <div class="dollar-row">
+          <span class="dollar-label">Compra</span>
+          <span class="dollar-value">${ars(compra)}</span>
         </div>
-        <div class="data-row">
-          <div class="data-left">
-            <span class="badge badge--usd">USD</span>
-            <span class="data-label">Venta</span>
-          </div>
-          <div class="data-right">
-            <span class="data-value">${ars(venta)}</span>
-          </div>
+        <div class="dollar-row">
+          <span class="dollar-label">Venta</span>
+          <span class="dollar-value">${ars(venta)}</span>
         </div>
       </div>
     `;
