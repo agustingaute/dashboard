@@ -125,12 +125,15 @@ function renderMonthGrid(items, today) {
     `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
   ).join('');
 
+  const totalRows = Math.ceil((firstWeekday + daysInMonth) / 7);
+  const gridRows  = `18px repeat(${totalRows}, 1fr)`;
+
   el.innerHTML = `
     <div class="mcal-header">
       <span class="mcal-month-label">${monthName}</span>
       <div class="mcal-legend">${legendItems}</div>
     </div>
-    <div class="mcal-grid">
+    <div class="mcal-grid" style="grid-template-rows: ${gridRows}">
       ${dayHeaders}
       ${cells}
     </div>`;

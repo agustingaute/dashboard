@@ -181,7 +181,7 @@ body::before {
 .cell--weather   { grid-column: 3; grid-row: 1; }
 .cell--fixtures  { grid-column: 1; grid-row: 2; }
 .cell--standings { grid-column: 2 / 4; grid-row: 2; }
-.cell--standings .cell__body { overflow: hidden; }
+.cell--standings .cell__body { overflow: hidden; justify-content: flex-start; }
 .cell--calendar  { grid-column: 1 / 4; grid-row: 3; }
 
 /* ============================================================
