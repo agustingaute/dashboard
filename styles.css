@@ -1,35 +1,42 @@
 /* ============================================================
-   DASHBOARD — Signal (Light)
-   Clean, airy, data-forward. Light mode inspired by iOS widgets.
+   DASHBOARD — Signal (Contrast)
+   Dark base, white accent cards. iOS widget energy.
    ============================================================ */
 
 /* ── Fuentes ── */
-/* Syne         : números grandes, headlines       */
-/* Space Grotesk: labels, body, tablas             */
+/* Barlow Condensed : números grandes              */
+/* Space Grotesk    : labels, body, tablas         */
 
 :root {
   /* Base */
-  --bg:         #ECEEF2;
-  --bg-card:    #FFFFFF;
-  --bg-hover:   #F5F6F8;
-  --border:     rgba(0,0,0,0.07);
-  --border-hi:  rgba(0,0,0,0.14);
+  --bg:         #0C0E12;
+  --bg-card:    #161A1F;
+  --bg-hover:   #1E2328;
+  --border:     rgba(255,255,255,0.07);
+  --border-hi:  rgba(255,255,255,0.14);
 
-  /* Texto */
-  --txt:        #0A0C10;
-  --txt-mid:    rgba(10,12,16,0.50);
-  --txt-dim:    rgba(10,12,16,0.30);
+  /* Texto (sobre cards oscuras) */
+  --txt:        #F0F4F8;
+  --txt-mid:    rgba(240,244,248,0.52);
+  --txt-dim:    rgba(240,244,248,0.28);
+
+  /* Cards blancas — variables override locales */
+  --card-light-bg:    #FFFFFF;
+  --card-light-txt:   #0A0C10;
+  --card-light-mid:   rgba(10,12,16,0.50);
+  --card-light-dim:   rgba(10,12,16,0.28);
+  --card-light-border:rgba(0,0,0,0.08);
 
   /* Acentos */
   --cyan:       #007AFF;
-  --cyan-glow:  rgba(0,122,255,0.15);
-  --cyan-dim:   rgba(0,122,255,0.07);
+  --cyan-glow:  rgba(0,122,255,0.18);
+  --cyan-dim:   rgba(0,122,255,0.08);
   --red:        #E8253A;
-  --red-dim:    rgba(232,37,58,0.10);
+  --red-dim:    rgba(232,37,58,0.12);
   --green:      #34C759;
   --green-dim:  rgba(52,199,89,0.12);
   --orange:     #FF6B00;
-  --purple:     #5856D6;
+  --purple:     #7C6FFF;
 
   /* Radios */
   --r:          12px;
@@ -66,8 +73,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -213,6 +220,23 @@ body::before {
   background: linear-gradient(90deg, transparent, var(--red), transparent);
   opacity: 0.6 !important;
 }
+
+/* ── White accent cards: dólar y clima ── */
+.cell--dollar,
+.cell--weather {
+  background: var(--card-light-bg);
+  border-color: var(--card-light-border);
+  color: var(--card-light-txt);
+  --txt:     var(--card-light-txt);
+  --txt-mid: var(--card-light-mid);
+  --txt-dim: var(--card-light-dim);
+  --border:  var(--card-light-border);
+  --bg-hover: #F0F2F5;
+}
+.cell--dollar:hover,
+.cell--weather:hover { border-color: rgba(0,0,0,0.16); }
+.cell--dollar::before,
+.cell--weather::before { display: none; }
 
 .cell__label {
   font-size: 9px;
@@ -540,7 +564,7 @@ body::before {
   text-transform: uppercase;
 }
 .fixture-tag.local  { background: var(--red-dim); color: var(--red); border: 1px solid rgba(232,37,58,0.2); }
-.fixture-tag.visita { background: rgba(255,255,255,0.05); color: var(--txt-dim); border: 1px solid var(--border); }
+.fixture-tag.visita { background: var(--bg-hover); color: var(--txt-dim); border: 1px solid var(--border); }
 
 .fixture-when { text-align: right; flex-shrink: 0; }
 .fixture-date {
