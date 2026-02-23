@@ -636,13 +636,18 @@ body::before {
 .standings-table tbody tr:has(+ .standings-sep) { border-bottom: none; }
 .standings-table tbody tr:hover { background: var(--bg-hover); }
 
+.standings-sep {
+  height: 0 !important;
+}
 .standings-sep td {
   padding: 0 !important;
-  height: 0;
+  height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden;
   border: none !important;
   border-top: 2px solid rgba(255,255,255,0.18) !important;
 }
-.standings-sep + tr td { padding-top: clamp(4px, 0.7vh, 7px); }
+.standings-sep + tr td { }
 
 .standings-table tbody tr.is-river {
   background: var(--red-dim);
