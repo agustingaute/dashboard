@@ -613,7 +613,6 @@ body::before {
   height: 100%;
   border-collapse: collapse;
   font-size: 11.5px;
-  table-layout: fixed;
 }
 
 .standings-table thead th {
