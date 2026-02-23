@@ -227,23 +227,17 @@ body::before {
 }
 .cell:hover { border-color: var(--border-hi); }
 
-/* Top accent line */
+/* Top accent line — solo visible en hover, siempre rojo */
 .cell::before {
   content: '';
   position: absolute;
   top: 0; left: 16px; right: 16px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
 .cell:hover::before { opacity: 0.5; }
-
-/* River red accent for fixtures */
-.cell--fixtures::before {
-  background: linear-gradient(90deg, transparent, var(--red), transparent);
-  opacity: 0.6 !important;
-}
 
 /* ── Light accent cards: dólar, cripto, clima, calendario ── */
 .cell--dollar,
