@@ -83,12 +83,12 @@ function renderStandings(groups) {
   // Armar el set de índices únicos: siempre incluir el 0 (líder)
   const selected = [allRows[0], ...allRows.slice(winStart, winEnd + 1)];
 
-  const renderRow = (row, separator = false) => {
+  const renderRow = (row, gapAbove = false) => {
     const isRiver = row.entity?.object?.id === RIVER_ID;
     const name = row.entity?.object?.short_name || '?';
+    const classes = [isRiver ? 'is-river' : '', gapAbove ? 'has-gap-above' : ''].filter(Boolean).join(' ');
     return `
-      ${separator ? '<tr class="standings-sep"><td colspan="7"></td></tr>' : ''}
-      <tr class="${isRiver ? 'is-river' : ''}">
+      <tr class="${classes}">
         <td class="pos">${row.num}</td>
         <td class="team">${name}</td>
         <td class="num">${getValue(row, 'GamePlayed')}</td>
