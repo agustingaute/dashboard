@@ -223,28 +223,48 @@ body::before {
   overflow: hidden;
   min-height: 0;
   min-width: 0;
-  transition: border-color 0.2s;
+  box-shadow: 0 -2px 0 0 transparent;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
-.cell:hover { border-color: var(--border-hi); }
+.cell:hover {
+  border-color: var(--border-hi);
+  box-shadow: 0 -2px 0 0 rgba(180, 15, 40, 0.55);
+}
 
-/* Top accent line — solo visible en hover */
+/* Fade en los costados: ::before tapa los extremos con el color de fondo */
 .cell::before {
   content: '';
   position: absolute;
-  top: 0; left: 16px; right: 16px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #c41230, transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
+  top: -2px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--bg-card) 0%,
+    transparent 22%,
+    transparent 78%,
+    var(--bg-card) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
 }
-/* Cards oscuras: sutil para que no parezca naranja */
-.cell:hover::before { opacity: 0.45; }
 
-/* Cards claras: rojo oscuro visible sobre fondo #E2E2E2 */
-.cell--dollar:hover::before,
-.cell--crypto:hover::before,
-.cell--weather:hover::before,
-.cell--calendar:hover::before { opacity: 0.85; }
+/* Cards claras: mismo fade pero con su color de fondo */
+.cell--dollar:hover,
+.cell--crypto:hover,
+.cell--weather:hover,
+.cell--calendar:hover {
+  box-shadow: 0 -2px 0 0 rgba(140, 8, 28, 0.9);
+}
+.cell--dollar::before,
+.cell--crypto::before,
+.cell--weather::before,
+.cell--calendar::before {
+  background: linear-gradient(90deg,
+    var(--card-light-bg) 0%,
+    transparent 22%,
+    transparent 78%,
+    var(--card-light-bg) 100%
+  );
+}
 
 /* ── Light accent cards: dólar, cripto, clima, calendario ── */
 .cell--dollar,
