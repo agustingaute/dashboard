@@ -14,7 +14,7 @@
   <header class="topbar">
     <div class="topbar__left">
       <span class="topbar__dot"></span>
-      <span class="topbar__label">LIVE</span>
+      <span class="topbar__label" id="topbar-greeting"></span>
     </div>
     <div class="topbar__center">
       <span id="clock" class="topbar__clock"></span>
@@ -88,6 +88,23 @@
 
   <script src="config.js"></script>
   <script type="module" src="app.js"></script>
+  <script>
+    (function() {
+      const el = document.getElementById('topbar-greeting');
+      const text = 'Hola Agustin!';
+      let i = 0;
+      function type() {
+        if (i <= text.length) {
+          el.textContent = text.slice(0, i);
+          i++;
+          setTimeout(type, i === 1 ? 600 : 60);
+        } else {
+          el.classList.add('typing-done');
+        }
+      }
+      setTimeout(type, 400);
+    })();
+  </script>
 
 </body>
 </html>
