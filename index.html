@@ -100,7 +100,14 @@
           setTimeout(type, i === 1 ? 600 : 60);
         } else {
           el.classList.add('typing-done');
+          setTimeout(restart, 3000);
         }
+      }
+      function restart() {
+        el.classList.remove('typing-done');
+        el.textContent = '';
+        i = 0;
+        setTimeout(type, 400);
       }
       setTimeout(type, 400);
     })();
