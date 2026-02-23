@@ -122,7 +122,7 @@ function renderMonthGrid(items, today) {
   }
 
   // Fill trailing cells with next month's days
-  const totalRows  = Math.max(6, Math.ceil((firstWeekday + daysInMonth) / 7));
+  const totalRows  = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
   const totalCells = totalRows * 7;
   const usedCells  = firstWeekday + daysInMonth;
   for (let i = 1; i <= totalCells - usedCells; i++) {
