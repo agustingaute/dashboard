@@ -722,7 +722,7 @@ body::before {
 .mcal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 18px repeat(6, 1fr);
+  grid-template-rows: 18px repeat(5, 1fr);
   gap: 2px;
   flex: 1;
   min-height: 0;
