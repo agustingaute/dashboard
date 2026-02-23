@@ -1,6 +1,6 @@
 /* ============================================================
-   DASHBOARD — Signal
-   Dark, bold, modern. Data-forward. App, not paper.
+   DASHBOARD — Signal (Light)
+   Clean, airy, data-forward. Light mode inspired by iOS widgets.
    ============================================================ */
 
 /* ── Fuentes ── */
@@ -9,31 +9,31 @@
 
 :root {
   /* Base */
-  --bg:         #080C10;
-  --bg-card:    #0E1318;
-  --bg-hover:   #141A22;
-  --border:     rgba(255,255,255,0.06);
-  --border-hi:  rgba(255,255,255,0.12);
+  --bg:         #ECEEF2;
+  --bg-card:    #FFFFFF;
+  --bg-hover:   #F5F6F8;
+  --border:     rgba(0,0,0,0.07);
+  --border-hi:  rgba(0,0,0,0.14);
 
   /* Texto */
-  --txt:        #F0F4F8;
-  --txt-mid:    rgba(240,244,248,0.55);
-  --txt-dim:    rgba(240,244,248,0.28);
+  --txt:        #0A0C10;
+  --txt-mid:    rgba(10,12,16,0.50);
+  --txt-dim:    rgba(10,12,16,0.30);
 
   /* Acentos */
-  --cyan:       #00D4FF;
-  --cyan-glow:  rgba(0,212,255,0.18);
-  --cyan-dim:   rgba(0,212,255,0.08);
+  --cyan:       #007AFF;
+  --cyan-glow:  rgba(0,122,255,0.15);
+  --cyan-dim:   rgba(0,122,255,0.07);
   --red:        #E8253A;
-  --red-dim:    rgba(232,37,58,0.12);
-  --green:      #00E676;
-  --green-dim:  rgba(0,230,118,0.10);
-  --orange:     #FF9800;
-  --purple:     #7C4DFF;
+  --red-dim:    rgba(232,37,58,0.10);
+  --green:      #34C759;
+  --green-dim:  rgba(52,199,89,0.12);
+  --orange:     #FF6B00;
+  --purple:     #5856D6;
 
   /* Radios */
-  --r:          10px;
-  --r-sm:       6px;
+  --r:          12px;
+  --r-sm:       7px;
 
   /* Topbar */
   --topbar-h:   38px;
@@ -66,8 +66,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(0,212,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.015) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -247,9 +247,9 @@ body::before {
   height: 10px;
   border-radius: 4px;
   background: linear-gradient(90deg,
-    rgba(255,255,255,0.03) 25%,
-    rgba(255,255,255,0.07) 50%,
-    rgba(255,255,255,0.03) 75%);
+    rgba(0,0,0,0.04) 25%,
+    rgba(0,0,0,0.08) 50%,
+    rgba(0,0,0,0.04) 75%);
   background-size: 400% 100%;
   animation: shimmer 1.8s infinite;
   margin-bottom: 8px;
@@ -298,10 +298,10 @@ body::before {
 }
 
 .dollar-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(20px, 3.5vh, 40px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(24px, 4vh, 46px);
+  font-weight: 900;
+  letter-spacing: -0.01em;
   color: var(--txt);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -338,9 +338,10 @@ body::before {
 }
 
 .crypto-ticker {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(18px, 2.5vh, 28px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   flex-shrink: 0;
 }
@@ -365,10 +366,10 @@ body::before {
 }
 
 .crypto-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(16px, 2.8vh, 32px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(20px, 3.2vh, 38px);
+  font-weight: 900;
+  letter-spacing: -0.01em;
   color: var(--txt);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -447,10 +448,10 @@ body::before {
 .weather-icon svg { width: 32px; height: 32px; }
 
 .weather-temp {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(20px, 3.5vh, 40px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(24px, 4vh, 46px);
+  font-weight: 900;
+  letter-spacing: -0.01em;
   color: var(--txt);
   line-height: 1;
 }
@@ -634,9 +635,9 @@ body::before {
 }
 .standings-table tbody td.team { font-weight: 500; color: var(--txt); }
 .standings-table tbody td.pts  {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: clamp(11px, 1.5vh, 15px);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(12px, 1.6vh, 17px);
   color: var(--txt);
 }
 
