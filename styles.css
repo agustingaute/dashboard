@@ -8,35 +8,35 @@
 /* Space Grotesk    : labels, body, tablas         */
 
 :root {
-  /* Base */
-  --bg:         #0C0E12;
-  --bg-card:    #161A1F;
-  --bg-hover:   #1E2328;
-  --border:     rgba(255,255,255,0.07);
-  --border-hi:  rgba(255,255,255,0.14);
+  /* Base — negros/grises puros, sin tinte azul */
+  --bg:         #0A0A0A;
+  --bg-card:    #141414;
+  --bg-hover:   #1C1C1C;
+  --border:     rgba(255,255,255,0.08);
+  --border-hi:  rgba(255,255,255,0.16);
 
   /* Texto (sobre cards oscuras) */
-  --txt:        #F0F4F8;
-  --txt-mid:    rgba(240,244,248,0.52);
-  --txt-dim:    rgba(240,244,248,0.28);
+  --txt:        #F2F2F2;
+  --txt-mid:    rgba(242,242,242,0.50);
+  --txt-dim:    rgba(242,242,242,0.26);
 
-  /* Cards blancas — variables override locales */
-  --card-light-bg:    #FFFFFF;
-  --card-light-txt:   #0A0C10;
-  --card-light-mid:   rgba(10,12,16,0.50);
-  --card-light-dim:   rgba(10,12,16,0.28);
+  /* Cards claras — variables override locales */
+  --card-light-bg:    #F4F4F4;
+  --card-light-txt:   #0A0A0A;
+  --card-light-mid:   rgba(10,10,10,0.50);
+  --card-light-dim:   rgba(10,10,10,0.28);
   --card-light-border:rgba(0,0,0,0.08);
 
-  /* Acentos */
-  --cyan:       #007AFF;
-  --cyan-glow:  rgba(0,122,255,0.18);
-  --cyan-dim:   rgba(0,122,255,0.08);
+  /* Acentos — rojo River como protagonista, sin cyan */
+  --cyan:       #E8253A;
+  --cyan-glow:  rgba(232,37,58,0.18);
+  --cyan-dim:   rgba(232,37,58,0.08);
   --red:        #E8253A;
   --red-dim:    rgba(232,37,58,0.12);
-  --green:      #34C759;
-  --green-dim:  rgba(52,199,89,0.12);
-  --orange:     #FF6B00;
-  --purple:     #7C6FFF;
+  --green:      #2ECC71;
+  --green-dim:  rgba(46,204,113,0.12);
+  --orange:     #E8253A;
+  --purple:     #E8253A;
 
   /* Radios */
   --r:          12px;
@@ -73,8 +73,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -221,22 +221,29 @@ body::before {
   opacity: 0.6 !important;
 }
 
-/* ── White accent cards: dólar y clima ── */
+/* ── Light accent cards: dólar, cripto, clima, calendario ── */
 .cell--dollar,
-.cell--weather {
+.cell--crypto,
+.cell--weather,
+.cell--calendar {
   background: var(--card-light-bg);
   border-color: var(--card-light-border);
   color: var(--card-light-txt);
-  --txt:     var(--card-light-txt);
-  --txt-mid: var(--card-light-mid);
-  --txt-dim: var(--card-light-dim);
-  --border:  var(--card-light-border);
-  --bg-hover: #F0F2F5;
+  --txt:      var(--card-light-txt);
+  --txt-mid:  var(--card-light-mid);
+  --txt-dim:  var(--card-light-dim);
+  --border:   var(--card-light-border);
+  --border-hi:rgba(0,0,0,0.16);
+  --bg-hover: #EBEBEB;
 }
 .cell--dollar:hover,
-.cell--weather:hover { border-color: rgba(0,0,0,0.16); }
+.cell--crypto:hover,
+.cell--weather:hover,
+.cell--calendar:hover { border-color: rgba(0,0,0,0.16); }
 .cell--dollar::before,
-.cell--weather::before { display: none; }
+.cell--crypto::before,
+.cell--weather::before,
+.cell--calendar::before { display: none; }
 
 .cell__label {
   font-size: 9px;
@@ -369,8 +376,8 @@ body::before {
   text-transform: uppercase;
   flex-shrink: 0;
 }
-.crypto-ticker--btc { color: var(--orange); }
-.crypto-ticker--eth { color: var(--purple); }
+.crypto-ticker--btc { color: var(--red); }
+.crypto-ticker--eth { color: var(--txt-mid); }
 
 .crypto-name {
   font-size: 11px;
