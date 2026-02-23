@@ -246,9 +246,9 @@ body::before {
 .cell--calendar::before { display: none; }
 
 .cell__label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--txt-dim);
 }
@@ -447,13 +447,14 @@ body::before {
 }
 
 .weather-place {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--txt);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .weather-note {
@@ -559,6 +560,8 @@ body::before {
   display: flex;
   align-items: center;
   gap: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .fixture-tag {
@@ -580,6 +583,8 @@ body::before {
   font-weight: 600;
   color: var(--txt-mid);
   font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 .fixture-time {
   display: block;
@@ -664,7 +669,7 @@ body::before {
   color: var(--txt-dim);
   font-size: clamp(9px, 1.1vh, 11px);
 }
-.standings-table tbody td.team { font-weight: 500; color: var(--txt); }
+.standings-table tbody td.team { font-weight: 500; color: var(--txt); text-transform: uppercase; letter-spacing: 0.04em; }
 .standings-table tbody td.pts  {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
@@ -717,7 +722,7 @@ body::before {
 .mcal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 1fr;
+  grid-template-rows: 18px repeat(6, 1fr);
   gap: 2px;
   flex: 1;
   min-height: 0;
@@ -730,8 +735,9 @@ body::before {
   letter-spacing: 0.12em;
   color: var(--txt-dim);
   text-align: center;
-  padding-bottom: 7px;
+  padding-bottom: 3px;
   border-bottom: 1px solid var(--border);
+  align-self: end;
 }
 
 .mcal-cell {
@@ -759,7 +765,7 @@ body::before {
 .mcal-num {
   font-size: 9px;
   font-weight: 700;
-  color: var(--txt-dim);
+  color: var(--txt-mid);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -802,7 +808,7 @@ body::before {
 .mcal-event-label {
   font-size: 9.5px;
   font-weight: 600;
-  color: var(--txt-mid);
+  color: var(--txt);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -812,7 +818,7 @@ body::before {
 
 .mcal-event-more {
   font-size: 8.5px;
-  color: var(--txt-dim);
+  color: var(--txt-mid);
   font-weight: 500;
   line-height: 1.3;
   align-self: flex-start;
