@@ -99,6 +99,13 @@ body::before {
   display: flex;
   align-items: center;
   gap: 7px;
+  flex: 1;
+}
+
+.topbar__right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .topbar__dot {
@@ -121,6 +128,7 @@ body::before {
   letter-spacing: 0.2em;
   color: var(--red);
   text-transform: uppercase;
+  min-width: 88px; /* ancho del texto completo para evitar saltos de layout */
 }
 .topbar__label::after {
   content: '|';
@@ -140,6 +148,9 @@ body::before {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .topbar__clock {
