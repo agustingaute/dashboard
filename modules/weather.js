@@ -9,7 +9,7 @@ const WMO = {
 };
 
 const C_SUN   = '#e8253a'; // rojo
-const C_RAIN  = '#60a5fa'; // celeste
+const C_RAIN  = '#2563eb'; // celeste oscuro (contrasta en fondo claro y oscuro)
 const C_CLOUD = 'currentColor'; // gris (hereda del tema)
 
 const ICONS = {
