@@ -633,7 +633,7 @@ body::before {
   height: 1%;  /* triggers equal row distribution when table height:100% */
 }
 .standings-table tbody tr:last-child { border-bottom: none; }
-.standings-table tbody tr:has(+ .standings-sep) { border-bottom: none; }
+.standings-table tbody tr:has(+ .standings-sep) { border-bottom: 2px solid rgba(255,255,255,0.18); }
 .standings-table tbody tr:hover { background: var(--bg-hover); }
 
 .standings-sep {
@@ -643,11 +643,11 @@ body::before {
   padding: 0 !important;
   height: 0 !important;
   max-height: 0 !important;
+  line-height: 0 !important;
+  font-size: 0 !important;
   overflow: hidden;
   border: none !important;
-  border-top: 2px solid rgba(255,255,255,0.18) !important;
 }
-.standings-sep + tr td { }
 
 .standings-table tbody tr.is-river {
   background: var(--red-dim);
