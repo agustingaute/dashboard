@@ -61,20 +61,16 @@ function buildUrl(lat, lon) {
 }
 
 function rowHTML(label, current) {
-  const desc = WMO[current.weather_code] ?? '—';
   const temp = Math.round(current.temperature_2m);
-  const hum  = current.relative_humidity_2m;
-  const wind = Math.round(current.wind_speed_10m);
 
   return `
-    <div class="data-row">
-      <div class="data-left">
-        <span class="weather-icon">${getIcon(current.weather_code)}</span>
-        <span class="data-label">${label}</span>
+    <div class="weather-row">
+      <div class="weather-left">
+        <span class="weather-place">${label}</span>
       </div>
-      <div class="data-right">
-        <span class="data-value">${temp}°</span>
-        <span class="data-note dim">${desc} · ${hum}% · ${wind}km/h</span>
+      <div class="weather-right">
+        <span class="weather-icon">${getIcon(current.weather_code)}</span>
+        <span class="weather-temp">${temp}°</span>
       </div>
     </div>
   `;
@@ -86,15 +82,22 @@ export async function refreshWeather() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { current } = await res.json();
 
-    let html = `<div class="data-list">${rowHTML(BA.name, current)}`;
+    let html = `<div class="weather-grid">${rowHTML(BA.name, current)}`;
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
-          const r = await fetch(buildUrl(pos.coords.latitude, pos.coords.longitude));
-          const { current: c } = await r.json();
-          const list = document.querySelector('#weather-content .data-list');
-          if (list) list.insertAdjacentHTML('beforeend', rowHTML('Tu ubicación', c));
+          const { latitude: lat, longitude: lon } = pos.coords;
+          const [weatherRes, geoRes] = await Promise.all([
+            fetch(buildUrl(lat, lon)),
+            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=es`)
+          ]);
+          const { current: c } = await weatherRes.json();
+          const geo = await geoRes.json();
+          const raw = geo.city || geo.locality || 'Mi ubicación';
+          const city = raw.replace(/^Partido de /i, '');
+          const grid = document.querySelector('#weather-content .weather-grid');
+          if (grid) grid.insertAdjacentHTML('beforeend', rowHTML(city, c));
         } catch (_) {}
       }, () => {});
     }

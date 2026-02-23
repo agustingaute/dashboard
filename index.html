@@ -6,79 +6,87 @@
   <title>Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body class="app">
 
-  <header class="header">
-    <span id="clock" class="clock"></span>
-    <span id="date-display" class="date"></span>
+  <header class="topbar">
+    <div class="topbar__left">
+      <span class="topbar__dot"></span>
+      <span class="topbar__label">LIVE</span>
+    </div>
+    <div class="topbar__center">
+      <span id="clock" class="topbar__clock"></span>
+      <span class="topbar__sep">/</span>
+      <span id="date-display" class="topbar__date"></span>
+    </div>
+    <div class="topbar__right">
+      <span class="topbar__brand">DASHBOARD</span>
+    </div>
   </header>
 
-  <main class="layout">
+  <main class="grid">
 
-    <!-- Fila 1: Clima / Dólar / Cripto -->
-    <div class="row row--top">
-      <div class="card card--weather">
-        <div class="card-label">Clima</div>
-        <div class="card-body" id="weather-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
-      </div>
-      <div class="card card--dollar">
-        <div class="card-label">Dólar Blue</div>
-        <div class="card-body" id="dollar-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
-      </div>
-      <div class="card card--crypto">
-        <div class="card-label">Cripto</div>
-        <div class="card-body" id="crypto-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
+    <!-- Fila 1: Dólar / Cripto / Clima -->
+    <div class="cell cell--dollar">
+      <div class="cell__label">Dólar Blue</div>
+      <div class="cell__body" id="dollar-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
       </div>
     </div>
 
-    <!-- Fila 2: Fixtures (izquierda) / Tabla de posiciones (derecha) -->
-    <div class="row row--mid">
-      <div class="card card--fixtures">
-        <div class="card-label">River Plate — Próximos</div>
-        <div class="card-body" id="fixtures-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
-      </div>
-      <div class="card card--standings">
-        <div class="card-label">Liga Profesional</div>
-        <div class="card-body" id="standings-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
+    <div class="cell cell--crypto">
+      <div class="cell__label">Cripto</div>
+      <div class="cell__body" id="crypto-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
       </div>
     </div>
 
-    <!-- Fila 3: Calendario (ancho completo) -->
-    <div class="row row--cal">
-      <div class="card card--calendar">
-        <div class="card-label">Calendario</div>
-        <div class="card-body" id="calendar-content">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
+    <div class="cell cell--weather">
+      <div class="cell__label">Clima</div>
+      <div class="cell__body" id="weather-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>
+
+    <!-- Fila 2: Fixtures / Standings -->
+    <div class="cell cell--fixtures">
+      <div class="cell__label">River Plate <span class="label__sub">— Próximos</span></div>
+      <div class="cell__body" id="fixtures-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>
+
+    <div class="cell cell--standings">
+      <div class="cell__label">Liga Profesional</div>
+      <div class="cell__body" id="standings-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>
+
+    <!-- Fila 3: Calendario -->
+    <div class="cell cell--calendar">
+      <div class="cell__label">Calendario</div>
+      <div class="cell__body" id="calendar-content">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
       </div>
     </div>
 
   </main>
 
-  <script src="config.js"></script>
+  <div id="cal-tooltip"></div>
 
+  <script src="config.js"></script>
   <script type="module" src="app.js"></script>
 
 </body>
