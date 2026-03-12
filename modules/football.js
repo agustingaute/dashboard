@@ -1,6 +1,6 @@
 const RIVER_ID = 'igi';
 const LIGA_ID  = 'hc';
-const PROXY    = 'https://corsproxy.io/?';
+const PROXY    = 'https://api.codetabs.com/v1/proxy?quest=';
 
 async function fetchSSR(url) {
   const res = await fetch(PROXY + encodeURIComponent(url), { headers: { Accept: 'text/html' } });
