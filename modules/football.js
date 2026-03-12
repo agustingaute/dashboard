@@ -17,7 +17,7 @@ function gameDate(startTime) {
   const date = new Date(`${yyyy}-${mm}-${dd}T${t}:00+01:00`); // promiedos sends UTC+1 (Spain server)
   const tz   = 'America/Argentina/Buenos_Aires';
   const day  = date.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: tz });
-  const time = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: tz });
+  const time = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz });
   return { day, time: time + 'hs' };
 }
 
