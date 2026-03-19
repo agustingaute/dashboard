@@ -55,9 +55,11 @@ function renderMonthGrid(items, today) {
   const firstWeekday = new Date(year, month, 1).getDay();
   const totalRows    = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
 
-  // Build eventsByWeek — single pass for ALL events (single-day and multi-day)
-  // Each entry gets colStart (1-7) and span for this week's segment
-  const eventsByWeek = Array.from({ length: totalRows }, () => []);
+  // ── Classify events ──────────────────────────────────────────────────────
+  // Multi-day  → spanning bars per week (grid rows 2+)
+  // Single-day → compact pills inside day cells (grid row 1)
+  const multiDayByWeek = Array.from({ length: totalRows }, () => []);
+  const singleByDay    = {}; // dom (1-31) → [{color, title, startDT}]
 
   items.forEach(ev => {
     let evStart, evEnd, startDT = null;
@@ -74,30 +76,41 @@ function renderMonthGrid(items, today) {
       startDT  = ev.start.dateTime;
     }
 
-    for (let w = 0; w < totalRows; w++) {
-      const wBase      = 1 - firstWeekday + w * 7;
-      const weekStart  = new Date(year, month, wBase);
-      const weekEndInc = new Date(year, month, wBase + 6);
-      const weekEndExc = new Date(year, month, wBase + 7);
-      if (evStart >= weekEndExc || evEnd <= weekStart) continue;
+    const spanDays   = (evEnd - evStart) / 86400000;
+    const isMultiDay = spanDays > 1;
 
-      const colStart   = evStart < weekStart ? 1 : evStart.getDay() + 1;
-      const lastDay    = new Date(evEnd.getTime() - 86400000);
-      const lastInWeek = lastDay > weekEndInc ? weekEndInc : lastDay;
-      const colEnd     = lastInWeek.getDay() + 1;
-      const span       = colEnd - colStart + 1;
-      const isStart    = evStart >= weekStart;
+    if (!isMultiDay) {
+      // Single-day → pill inside day cell (current month only)
+      if (evStart.getFullYear() === year && evStart.getMonth() === month) {
+        const dom = evStart.getDate();
+        if (!singleByDay[dom]) singleByDay[dom] = [];
+        singleByDay[dom].push({ color: ev._calColor, title: ev.summary || '', startDT });
+      }
+    } else {
+      // Multi-day → spanning bar per week it overlaps
+      for (let w = 0; w < totalRows; w++) {
+        const wBase      = 1 - firstWeekday + w * 7;
+        const weekStart  = new Date(year, month, wBase);
+        const weekEndInc = new Date(year, month, wBase + 6);
+        const weekEndExc = new Date(year, month, wBase + 7);
+        if (evStart >= weekEndExc || evEnd <= weekStart) continue;
 
-      eventsByWeek[w].push({
-        color: ev._calColor,
-        title: ev.summary || '',
-        colStart, span,
-        startDT:    isStart ? startDT : null,
-        isMultiDay: (evEnd - evStart) / 86400000 > 1,
-      });
+        const colStart = evStart < weekStart ? 1 : evStart.getDay() + 1;
+        const lastDay  = new Date(evEnd.getTime() - 86400000);
+        const lastInWk = lastDay > weekEndInc ? weekEndInc : lastDay;
+        const colEnd   = lastInWk.getDay() + 1;
+        const span     = colEnd - colStart + 1;
+
+        multiDayByWeek[w].push({
+          color: ev._calColor,
+          title: ev.summary || '',
+          colStart, span,
+        });
+      }
     }
   });
 
+  // ── Render ────────────────────────────────────────────────────────────────
   const dayHeaders = ['D','L','M','X','J','V','S']
     .map(d => `<div class="mcal-dow">${d}</div>`).join('');
 
@@ -105,7 +118,7 @@ function renderMonthGrid(items, today) {
   for (let w = 0; w < totalRows; w++) {
     const wBase = 1 - firstWeekday + w * 7;
 
-    // ── Day number cells (grid-row: 1 explicit) ──
+    // ── Day cells (grid-row: 1) — contain day number + single-day pills ──
     let dayCells = '';
     for (let col = 0; col < 7; col++) {
       const dom     = wBase + col;
@@ -132,27 +145,35 @@ function renderMonthGrid(items, today) {
         isNext  ? 'mcal-cell--next-month' : '',
       ].filter(Boolean).join(' ');
 
+      // Single-day event pills for this cell
+      const dayEvs    = isCur ? (singleByDay[d] || []) : [];
+      const pillsHtml = dayEvs.map(ev => {
+        const timeStr = ev.startDT
+          ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
+          : '';
+        const label   = ev.title.split(' ').slice(0, 3).join(' ');
+        const tooltip = ev.title + (timeStr ? '\n' + timeStr : '');
+        return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
+          <span class="mcal-event-dot" style="background:${ev.color}"></span>
+          <span class="mcal-event-label">${timeStr ? timeStr + ' ' : ''}${label}</span>
+        </div>`;
+      }).join('');
+
       dayCells += `<div class="${cls}" style="grid-row:1; --day-shade:rgba(0,0,0,${shade})">
         <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
+        ${pillsHtml ? `<div class="mcal-events">${pillsHtml}</div>` : ''}
       </div>`;
     }
 
-    // ── Event bars (no grid-row → CSS auto-places in rows 2+) ──
+    // ── Multi-day bars (no grid-row → CSS auto-places in rows 2+) ──
     let bars = '';
-    eventsByWeek[w].forEach(ev => {
+    multiDayByWeek[w].forEach(ev => {
       const label   = ev.title.split(' ').slice(0, 4).join(' ');
-      const timeStr = ev.startDT
-        ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
-        : '';
-      const tooltip = ev.title + (timeStr ? '\n' + timeStr : '');
-      const inner   = ev.isMultiDay
-        ? label
-        : `<span class="mcal-bar-dot"></span>${timeStr ? timeStr + ' ' : ''}${label}`;
-
+      const tooltip = ev.title;
       bars += `<div class="mcal-event-bar"
         style="grid-column:${ev.colStart}/span ${ev.span}; background:${ev.color}"
         data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
-        <span class="mcal-event-bar-label">${inner}</span>
+        <span class="mcal-event-bar-label">${label}</span>
       </div>`;
     });
 

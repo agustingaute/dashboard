@@ -839,8 +839,8 @@ body::before {
 }
 
 .mcal-cell {
-  min-height: 0;
-  padding: 5px 5px 4px;
+  min-height: 32px;
+  padding: 4px 4px 3px;
   border-radius: var(--r-sm);
   display: flex;
   flex-direction: column;
@@ -895,7 +895,11 @@ body::before {
   gap: 3px;
   width: 100%;
   overflow: hidden;
+  cursor: default;
+  border-radius: 2px;
+  padding: 0 1px;
 }
+.mcal-event-pill:hover { background: rgba(255,255,255,0.06); }
 
 .mcal-event-dot {
   width: 5px;
