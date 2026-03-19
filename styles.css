@@ -763,41 +763,35 @@ body::before {
 }
 
 .mcal-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 2px;
   flex: 1;
   min-height: 0;
 }
 
-.mcal-dow-row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  flex-shrink: 0;
+.mcal-week-wrapper {
+  grid-column: 1 / -1;
+  position: relative;
 }
 
-.mcal-week {
+.mcal-week-cells {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: auto;
   gap: 2px;
-  flex: 1;
-  align-content: start;
+  height: 100%;
 }
 
 .mcal-event-bar {
-  grid-row: auto;
+  position: absolute;
   height: 15px;
   border-radius: 3px;
-  background: var(--bar-color);
   display: flex;
   align-items: center;
-  padding: 0 5px;
-  min-width: 0;
-  cursor: default;
-  opacity: 0.88;
-  margin: 0 1px;
+  padding: 0 6px;
+  z-index: 2;
+  opacity: 0.9;
+  pointer-events: auto;
 }
 .mcal-event-bar:hover { opacity: 1; }
 

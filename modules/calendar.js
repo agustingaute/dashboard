@@ -89,15 +89,16 @@ function renderMonthGrid(items, today) {
     .map(d => `<div class="mcal-dow">${d}</div>`).join('');
 
   let weeksHtml = '';
+
   for (let w = 0; w < totalRows; w++) {
-    const weekBaseDay = 1 - firstWeekday + w * 7; // day-of-month for col 0 (Sunday) of this week
+    const weekBaseDay = 1 - firstWeekday + w * 7;
     const weekStart   = new Date(year, month, weekBaseDay);
     const weekEnd     = new Date(year, month, weekBaseDay + 6);
 
     // Day cells
     let dayCells = '';
     for (let col = 0; col < 7; col++) {
-      const dom  = weekBaseDay + col; // day-of-month (can be < 1 or > daysInMonth)
+      const dom  = weekBaseDay + col;
       const date = new Date(year, month, dom);
       const d    = date.getDate();
       const isCurrentMonth = dom >= 1 && dom <= daysInMonth;
@@ -107,7 +108,7 @@ function renderMonthGrid(items, today) {
       const isPast         = isCurrentMonth && d < todayDate;
 
       if (isPrevMonth) {
-        dayCells += `<div class="mcal-cell mcal-cell--empty" style="grid-row:1"></div>`;
+        dayCells += `<div class="mcal-cell mcal-cell--empty"></div>`;
         continue;
       }
 
@@ -130,43 +131,62 @@ function renderMonthGrid(items, today) {
       }).join('');
       const overflow = events.length > 2 ? `<div class="mcal-event-more">+${events.length - 2}</div>` : '';
 
-      const cls = ['mcal-cell', isToday ? 'mcal-cell--today' : '', isPast ? 'mcal-cell--past' : '', isNextMonth ? 'mcal-cell--next-month' : ''].filter(Boolean).join(' ');
-      dayCells += `<div class="${cls}" style="grid-row:1; --day-shade:rgba(0,0,0,${shade})">
+      const cls = ['mcal-cell',
+        isToday ? 'mcal-cell--today' : '',
+        isPast  ? 'mcal-cell--past'  : '',
+        isNextMonth ? 'mcal-cell--next-month' : '',
+      ].filter(Boolean).join(' ');
+
+      dayCells += `<div class="${cls}" style="--day-shade:rgba(0,0,0,${shade})">
         <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
         <div class="mcal-events">${pills}${overflow}</div>
       </div>`;
     }
 
-    // Multi-day event bars
+    // Absolutely-positioned multi-day bars for this week
+    // left = b*(100%+2px)/7, width = span*(100%+2px)/7 - 2px  (7-col equal grid with 2px gap)
+    const rowOccupancy = [];
     let bars = '';
     multis
       .filter(ev => ev.s <= weekEnd && ev.e > weekStart)
       .forEach(ev => {
         const barStart   = ev.s < weekStart ? 1 : ev.s.getDay() + 1;
-        const lastDay    = new Date(ev.e.getTime() - 86400000); // e is exclusive → last real day
+        const lastDay    = new Date(ev.e.getTime() - 86400000);
         const lastInWeek = lastDay > weekEnd ? weekEnd : lastDay;
         const barEnd     = lastInWeek.getDay() + 1;
         const span       = barEnd - barStart + 1;
-        const tip        = ev.title.replace(/"/g, '&quot;');
-        bars += `<div class="mcal-event-bar" style="grid-column:${barStart}/span ${span}; --bar-color:${ev.color}" data-tooltip="${tip}" data-color="${ev.color}">
+        let row = 0;
+        while (rowOccupancy[row] !== undefined && rowOccupancy[row] >= barStart) row++;
+        rowOccupancy[row] = barEnd;
+        const topOffset = 27 + row * 17; // 5px pad + 18px num + 2px gap + row stacking
+        const b = barStart - 1;
+        const tip = ev.title.replace(/"/g, '&quot;');
+        bars += `<div class="mcal-event-bar"
+          style="left:calc(${b}*(100% + 2px)/7); width:calc(${span}*(100% + 2px)/7 - 2px); top:${topOffset}px; background:${ev.color}"
+          data-tooltip="${tip}" data-color="${ev.color}">
           <span class="mcal-event-bar-label">${ev.title}</span>
         </div>`;
       });
 
-    weeksHtml += `<div class="mcal-week">${dayCells}${bars}</div>`;
+    weeksHtml += `<div class="mcal-week-wrapper">
+      <div class="mcal-week-cells">${dayCells}</div>
+      ${bars}
+    </div>`;
   }
 
   const legendItems = CALENDARS.map(c =>
     `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
   ).join('');
 
+  const gridRows = `18px repeat(${totalRows}, 1fr)`;
+
   el.innerHTML = `
     <div class="mcal-header">
       <span class="mcal-month-label">${monthName}</span>
       <div class="mcal-legend">${legendItems}</div>
     </div>
-    <div class="mcal-grid">
-      <div class="mcal-dow-row">${dayHeaders}</div>
+    <div class="mcal-grid" style="grid-template-rows: ${gridRows}">
+      ${dayHeaders}
       ${weeksHtml}
     </div>`;
 }
@@ -179,7 +199,7 @@ export function refreshCalendar() {
 const tip = document.getElementById('cal-tooltip');
 
 document.addEventListener('mouseover', e => {
-  const pill = e.target.closest('.mcal-event-pill[data-tooltip]');
+  const pill = e.target.closest('.mcal-event-pill[data-tooltip], .mcal-event-bar[data-tooltip]');
   if (!pill) return;
   tip.textContent = pill.getAttribute('data-tooltip');
   const color = pill.getAttribute('data-color') || '#1c1c1c';
@@ -200,6 +220,6 @@ document.addEventListener('mousemove', e => {
 });
 
 document.addEventListener('mouseout', e => {
-  const pill = e.target.closest('.mcal-event-pill[data-tooltip]');
+  const pill = e.target.closest('.mcal-event-pill[data-tooltip], .mcal-event-bar[data-tooltip]');
   if (pill) tip.style.display = 'none';
 });
