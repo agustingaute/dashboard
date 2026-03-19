@@ -729,11 +729,17 @@ body::before {
   overflow: hidden;
 }
 
+/* ── Calendar ─────────────────────────────────────────────────── */
+/* Architecture: each week = bars section (position:relative, bars
+   use % widths) + cells section (7-col grid). Column backgrounds
+   are rendered in both sections so shading is visually continuous. */
+
 .mcal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .mcal-month-label {
@@ -749,6 +755,7 @@ body::before {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .mcal-legend-item {
@@ -762,10 +769,17 @@ body::before {
   text-transform: uppercase;
 }
 
+.mcal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
 .mcal-grid {
   display: flex;
   flex-direction: column;
-  gap: 0;
   flex: 1;
   min-height: 0;
 }
@@ -773,62 +787,9 @@ body::before {
 .mcal-dow-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0;
   flex-shrink: 0;
-}
-
-/* Each week = 7-col sub-grid.
-   Row 1 (auto): day number cells — explicit grid-row:1
-   Rows 2+ (16px each): multi-day bars — auto-placed by CSS grid
-   background fills bar-row areas so no white gaps show */
-.mcal-week {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: auto;
-  grid-auto-rows: 16px;
-  column-gap: 0;
-  row-gap: 0;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  align-content: start;
-  border-top: 1px solid rgba(0,0,0,0.07);
-  background: rgba(0,0,0,0.04);
-}
-
-.mcal-event-bar {
-  height: 13px;
-  margin: 1px 1px 2px;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  padding: 0 5px;
-  min-width: 0;
-  cursor: default;
-  opacity: 0.88;
-  align-self: center;
-}
-.mcal-event-bar:hover { opacity: 1; }
-
-.mcal-event-bar-label {
-  font-size: 8.5px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.02em;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.mcal-bar-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.7);
-  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  margin-bottom: 0;
 }
 
 .mcal-dow {
@@ -838,32 +799,93 @@ body::before {
   letter-spacing: 0.12em;
   color: var(--txt-dim);
   text-align: center;
-  padding-bottom: 3px;
-  border-bottom: 1px solid var(--border);
-  align-self: end;
+  padding: 3px 0;
+}
+
+/* Week row: flex column — bars section on top, cells section below */
+.mcal-week {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Bars section: height set by JS, relative container for absolute bars */
+.mcal-week-bars {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* 7-col background grid — same shades as cells below for visual continuity */
+.mcal-bars-bg {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.mcal-barcol-bg {
+  border-right: 1px solid rgba(0,0,0,0.05);
+}
+.mcal-barcol-bg:last-child { border-right: none; }
+.mcal-barcol-bg[data-today="1"] { background: rgba(232,37,58,0.06) !important; }
+
+/* Multi-day bars: absolutely positioned, widths/left in % */
+.mcal-bar {
+  position: absolute;
+  height: 14px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  min-width: 0;
+  box-sizing: border-box;
+  cursor: default;
+  opacity: 0.9;
+  transition: opacity 0.12s;
+  /* 1px right inset so adjacent bars at column boundaries have a gap */
+  margin-right: 1px;
+}
+.mcal-bar:hover { opacity: 1; }
+
+.mcal-bar-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Cells section: 7-col grid, fills remaining week height */
+.mcal-week-cells {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  flex: 1;
+  min-height: 0;
 }
 
 .mcal-cell {
-  min-height: 32px;
   padding: 4px 4px 3px;
-  border-radius: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 2px;
-  background: var(--day-shade, transparent);
-  border: none;
-  border-right: 1px solid rgba(0,0,0,0.06);
+  background: var(--shade, transparent);
+  border-right: 1px solid rgba(0,0,0,0.05);
+  min-height: 0;
+  overflow: hidden;
   transition: background 0.15s;
 }
-.mcal-cell:hover {
-  background: rgba(0,0,0,0.1) !important;
-}
+.mcal-cell:last-child { border-right: none; }
+.mcal-cell:hover { background: rgba(0,0,0,0.1) !important; }
 .mcal-cell--empty { background: transparent !important; pointer-events: none; }
-.mcal-cell--next-month { opacity: 1; }
-.mcal-cell--today {
-  background: rgba(232,37,58,0.06) !important;
-}
+.mcal-cell--today { background: rgba(232,37,58,0.06) !important; }
+.mcal-cell--next { opacity: 0.55; }
 
 .mcal-num {
   font-size: 9px;
@@ -875,7 +897,8 @@ body::before {
   justify-content: center;
   width: 18px;
   height: 18px;
-  align-self: center;
+  align-self: flex-end;
+  flex-shrink: 0;
   font-variant-numeric: tabular-nums;
 }
 .mcal-num--today {
@@ -886,14 +909,16 @@ body::before {
   box-shadow: 0 0 10px var(--cyan-glow);
 }
 
-.mcal-events {
+.mcal-pills {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   width: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.mcal-event-pill {
+.mcal-pill {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -902,17 +927,18 @@ body::before {
   cursor: default;
   border-radius: 2px;
   padding: 0 1px;
+  flex-shrink: 0;
 }
-.mcal-event-pill:hover { background: rgba(255,255,255,0.06); }
+.mcal-pill:hover { background: rgba(255,255,255,0.06); }
 
-.mcal-event-dot {
+.mcal-pill-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.mcal-event-label {
+.mcal-pill-label {
   font-size: 9.5px;
   font-weight: 600;
   color: var(--txt);
@@ -923,12 +949,24 @@ body::before {
   line-height: 1.3;
 }
 
-.mcal-event-more {
-  font-size: 8.5px;
+.mcal-more {
+  font-size: 8px;
   color: var(--txt-mid);
   font-weight: 500;
   line-height: 1.3;
-  align-self: flex-start;
+}
+
+/* ── Responsive: compact at narrow widths ────────────────────── */
+@media (max-width: 900px) {
+  .mcal-pill-label { font-size: 8.5px; }
+  .mcal-bar-label  { font-size: 8px; }
+  .mcal-num        { font-size: 8px; width: 15px; height: 15px; }
+}
+@media (max-width: 650px) {
+  /* Very small: hide text labels, show only dots */
+  .mcal-pill-label { display: none; }
+  .mcal-bar-label  { display: none; }
+  .mcal-legend-item span:last-child { display: none; }
 }
 
 .cal-empty {
