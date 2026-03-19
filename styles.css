@@ -828,10 +828,12 @@ body::before {
 }
 
 .mcal-barcol-bg {
-  border-right: 1px solid rgba(0,0,0,0.05);
+  border-right: 1px solid rgba(0,0,0,0.1);
+  transition: background 0.15s;
 }
 .mcal-barcol-bg:last-child { border-right: none; }
 .mcal-barcol-bg[data-today="1"] { background: rgba(232,37,58,0.06) !important; }
+.mcal-barcol-bg--hover { background: rgba(0,0,0,0.1) !important; }
 
 /* Multi-day bars: absolutely positioned, widths/left in % */
 .mcal-bar {
@@ -877,7 +879,7 @@ body::before {
   flex-direction: column;
   gap: 2px;
   background: var(--shade, transparent);
-  border-right: 1px solid rgba(0,0,0,0.05);
+  border-right: 1px solid rgba(0,0,0,0.1);
   min-height: 0;
   overflow: hidden;
   transition: background 0.15s;
