@@ -765,7 +765,7 @@ body::before {
 .mcal-grid {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
   flex: 1;
   min-height: 0;
 }
@@ -773,23 +773,25 @@ body::before {
 .mcal-dow-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 0;
   flex-shrink: 0;
 }
 
 /* Each week = 7-col sub-grid.
    Row 1 (auto): day number cells — explicit grid-row:1
-   Rows 2+ (15px each): event bars — auto-placed by CSS grid via grid-column span */
+   Rows 2+ (16px each): multi-day bars — auto-placed by CSS grid */
 .mcal-week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: auto;
-  grid-auto-rows: 15px;
-  gap: 2px;
+  grid-auto-rows: 16px;
+  column-gap: 0;
+  row-gap: 2px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
   align-content: start;
+  border-top: 1px solid rgba(0,0,0,0.07);
 }
 
 .mcal-event-bar {
@@ -841,24 +843,23 @@ body::before {
 .mcal-cell {
   min-height: 32px;
   padding: 4px 4px 3px;
-  border-radius: var(--r-sm);
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
   background: var(--day-shade, transparent);
-  border: 1px solid transparent;
-  transition: border-color 0.15s, background 0.15s;
+  border: none;
+  border-right: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.15s;
 }
 .mcal-cell:hover {
-  background: var(--bg-hover) !important;
-  border-color: var(--border-hi);
+  background: rgba(0,0,0,0.1) !important;
 }
 .mcal-cell--empty { background: transparent !important; pointer-events: none; }
 .mcal-cell--next-month { opacity: 1; }
 .mcal-cell--today {
   background: rgba(232,37,58,0.06) !important;
-  border-color: rgba(232,37,58,0.22) !important;
 }
 
 .mcal-num {
