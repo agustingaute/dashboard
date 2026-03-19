@@ -70,8 +70,20 @@ function renderMonthGrid(items, today) {
         addToDay(new Date(d), { color: ev._calColor, title: ev.summary || '', startDT: null, endDT: null, allDay: true });
       }
     } else {
-      const d = new Date(ev.start.dateTime);
-      addToDay(d, { color: ev._calColor, title: ev.summary || '', startDT: ev.start.dateTime, endDT: ev.end?.dateTime || null, allDay: false });
+      const startD = new Date(ev.start.dateTime);
+      const endD   = new Date(ev.end?.dateTime || ev.start.dateTime);
+      const startDay = new Date(startD.getFullYear(), startD.getMonth(), startD.getDate());
+      const endDay   = new Date(endD.getFullYear(),   endD.getMonth(),   endD.getDate());
+      for (const d = new Date(startDay); d <= endDay; d.setDate(d.getDate() + 1)) {
+        const isFirst = d.getTime() === startDay.getTime();
+        addToDay(new Date(d), {
+          color:   ev._calColor,
+          title:   ev.summary || '',
+          startDT: isFirst ? ev.start.dateTime : null,
+          endDT:   null,
+          allDay:  false,
+        });
+      }
     }
   });
 
