@@ -41,6 +41,18 @@ function showError(msg) {
     `<div class="error-state"><span>Error</span><span class="error-msg">${msg}</span></div>`;
 }
 
+// Pack multi-day bars into rows (greedy: first row that has space)
+function packBars(bars) {
+  const rowEnds = []; // rowEnds[r] = last colEnd used in row r
+  return bars.map(bar => {
+    const colEnd = bar.colStart + bar.span - 1;
+    let row = rowEnds.findIndex(end => end < bar.colStart);
+    if (row === -1) { row = rowEnds.length; rowEnds.push(0); }
+    rowEnds[row] = colEnd;
+    return { ...bar, row };
+  });
+}
+
 function renderMonthGrid(items, today) {
   const el = document.getElementById('calendar-content');
   if (!el) return;
@@ -56,10 +68,8 @@ function renderMonthGrid(items, today) {
   const totalRows    = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
 
   // ── Classify events ──────────────────────────────────────────────────────
-  // Multi-day  → spanning bars per week (grid rows 2+)
-  // Single-day → compact pills inside day cells (grid row 1)
   const multiDayByWeek = Array.from({ length: totalRows }, () => []);
-  const singleByDay    = {}; // dom (1-31) → [{color, title, startDT}]
+  const singleByDay    = {};
 
   items.forEach(ev => {
     let evStart, evEnd, startDT = null;
@@ -80,14 +90,12 @@ function renderMonthGrid(items, today) {
     const isMultiDay = spanDays > 1;
 
     if (!isMultiDay) {
-      // Single-day → pill inside day cell (current month only)
       if (evStart.getFullYear() === year && evStart.getMonth() === month) {
         const dom = evStart.getDate();
         if (!singleByDay[dom]) singleByDay[dom] = [];
         singleByDay[dom].push({ color: ev._calColor, title: ev.summary || '', startDT });
       }
     } else {
-      // Multi-day → spanning bar per week it overlaps
       for (let w = 0; w < totalRows; w++) {
         const wBase      = 1 - firstWeekday + w * 7;
         const weekStart  = new Date(year, month, wBase);
@@ -101,37 +109,67 @@ function renderMonthGrid(items, today) {
         const colEnd   = lastInWk.getDay() + 1;
         const span     = colEnd - colStart + 1;
 
-        multiDayByWeek[w].push({
-          color: ev._calColor,
-          title: ev.summary || '',
-          colStart, span,
-        });
+        multiDayByWeek[w].push({ color: ev._calColor, title: ev.summary || '', colStart, span });
       }
     }
   });
 
   // ── Render ────────────────────────────────────────────────────────────────
+  // New architecture: each week = bars section (position:relative, bars use % widths)
+  //                              + cells section (7-col grid below)
+  // Column backgrounds are rendered in BOTH sections so shading is continuous.
+  const BAR_ROW_H = 18; // px per bar row (14px bar + 2px top + 2px bottom)
+
   const dayHeaders = ['D','L','M','X','J','V','S']
     .map(d => `<div class="mcal-dow">${d}</div>`).join('');
 
   let weeksHtml = '';
   for (let w = 0; w < totalRows; w++) {
-    const wBase = 1 - firstWeekday + w * 7;
+    const wBase  = 1 - firstWeekday + w * 7;
+    const packed = packBars(multiDayByWeek[w]);
+    const numBarRows   = packed.length > 0 ? Math.max(...packed.map(b => b.row)) + 1 : 0;
+    const barsHeight   = numBarRows * BAR_ROW_H + (numBarRows > 0 ? 3 : 0); // +3px bottom pad
 
-    // ── Day cells (grid-row: 1) — contain day number + single-day pills ──
-    let dayCells = '';
+    // ── Background columns for bars section (visual continuity with cells) ──
+    let bgColsHtml = '';
+    for (let col = 0; col < 7; col++) {
+      const dom     = wBase + col;
+      const d       = new Date(year, month, dom).getDate();
+      const isCur   = dom >= 1 && dom <= daysInMonth;
+      const isToday = isCur && d === todayDate;
+      const shade   = isCur
+        ? (0.02 + (d - 1) / (daysInMonth - 1) * 0.07).toFixed(4)
+        : '0.18';
+      const todayAttr = isToday ? ' data-today="1"' : '';
+      bgColsHtml += `<div class="mcal-barcol-bg" style="background:rgba(0,0,0,${shade})"${todayAttr}></div>`;
+    }
+
+    // ── Multi-day bars (absolutely positioned with % widths) ──
+    let barsHtml = '';
+    packed.forEach(bar => {
+      const left  = ((bar.colStart - 1) / 7 * 100).toFixed(3);
+      const width = (bar.span / 7 * 100).toFixed(3);
+      const top   = bar.row * BAR_ROW_H + 2;
+      barsHtml += `<div class="mcal-bar"
+        style="left:${left}%;width:${width}%;top:${top}px;background:${bar.color}"
+        data-tooltip="${bar.title.replace(/"/g, '&quot;')}" data-color="${bar.color}">
+        <span class="mcal-bar-label">${bar.title}</span>
+      </div>`;
+    });
+
+    // ── Day cells — contain day number + single-day pills ──
+    let cellsHtml = '';
     for (let col = 0; col < 7; col++) {
       const dom     = wBase + col;
       const date    = new Date(year, month, dom);
       const d       = date.getDate();
       const isCur   = dom >= 1 && dom <= daysInMonth;
-      const isPrev  = dom < 1;
-      const isNext  = dom > daysInMonth;
       const isToday = isCur && d === todayDate;
       const isPast  = isCur && d < todayDate;
+      const isNext  = dom > daysInMonth;
 
-      if (isPrev) {
-        dayCells += `<div class="mcal-cell mcal-cell--empty" style="grid-row:1"></div>`;
+      if (dom < 1) {
+        cellsHtml += `<div class="mcal-cell mcal-cell--empty"></div>`;
         continue;
       }
 
@@ -142,46 +180,45 @@ function renderMonthGrid(items, today) {
       const cls = ['mcal-cell',
         isToday ? 'mcal-cell--today' : '',
         isPast  ? 'mcal-cell--past'  : '',
-        isNext  ? 'mcal-cell--next-month' : '',
+        isNext  ? 'mcal-cell--next'  : '',
       ].filter(Boolean).join(' ');
 
-      // Single-day event pills for this cell
-      const dayEvs    = isCur ? (singleByDay[d] || []) : [];
-      const pillsHtml = dayEvs.map(ev => {
+      const dayEvs  = isCur ? (singleByDay[d] || []) : [];
+      const visible = dayEvs.slice(0, 3);
+      const more    = dayEvs.length - visible.length;
+
+      const pillsHtml = visible.map(ev => {
         const timeStr = ev.startDT
           ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
           : '';
         const label   = ev.title.split(' ').slice(0, 3).join(' ');
         const tooltip = ev.title + (timeStr ? '\n' + timeStr : '');
-        return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
-          <span class="mcal-event-dot" style="background:${ev.color}"></span>
-          <span class="mcal-event-label">${timeStr ? timeStr + ' ' : ''}${label}</span>
+        return `<div class="mcal-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
+          <span class="mcal-pill-dot" style="background:${ev.color}"></span>
+          <span class="mcal-pill-label">${timeStr ? timeStr + ' ' : ''}${label}</span>
         </div>`;
       }).join('');
 
-      dayCells += `<div class="${cls}" style="grid-row:1; --day-shade:rgba(0,0,0,${shade})">
+      const morePill = more > 0 ? `<div class="mcal-more">+${more}</div>` : '';
+
+      cellsHtml += `<div class="${cls}" style="--shade:rgba(0,0,0,${shade})">
         <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
-        ${pillsHtml ? `<div class="mcal-events">${pillsHtml}</div>` : ''}
+        ${pillsHtml || morePill ? `<div class="mcal-pills">${pillsHtml}${morePill}</div>` : ''}
       </div>`;
     }
 
-    // ── Multi-day bars (no grid-row → CSS auto-places in rows 2+) ──
-    let bars = '';
-    multiDayByWeek[w].forEach(ev => {
-      const label   = ev.title.split(' ').slice(0, 4).join(' ');
-      const tooltip = ev.title;
-      bars += `<div class="mcal-event-bar"
-        style="grid-column:${ev.colStart}/span ${ev.span}; background:${ev.color}"
-        data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
-        <span class="mcal-event-bar-label">${label}</span>
-      </div>`;
-    });
-
-    weeksHtml += `<div class="mcal-week">${dayCells}${bars}</div>`;
+    const barsDisplay = barsHeight === 0 ? 'display:none;' : '';
+    weeksHtml += `<div class="mcal-week">
+      <div class="mcal-week-bars" style="height:${barsHeight}px;${barsDisplay}">
+        <div class="mcal-bars-bg">${bgColsHtml}</div>
+        ${barsHtml}
+      </div>
+      <div class="mcal-week-cells">${cellsHtml}</div>
+    </div>`;
   }
 
   const legendItems = CALENDARS.map(c =>
-    `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
+    `<span class="mcal-legend-item"><span class="mcal-dot" style="background:${c.color}"></span>${c.name}</span>`
   ).join('');
 
   el.innerHTML = `
@@ -203,7 +240,7 @@ export function refreshCalendar() {
 const tip = document.getElementById('cal-tooltip');
 
 document.addEventListener('mouseover', e => {
-  const pill = e.target.closest('.mcal-event-pill[data-tooltip], .mcal-event-bar[data-tooltip]');
+  const pill = e.target.closest('.mcal-pill[data-tooltip], .mcal-bar[data-tooltip]');
   if (!pill) return;
   tip.textContent = pill.getAttribute('data-tooltip');
   const color = pill.getAttribute('data-color') || '#1c1c1c';
@@ -224,6 +261,6 @@ document.addEventListener('mousemove', e => {
 });
 
 document.addEventListener('mouseout', e => {
-  const pill = e.target.closest('.mcal-event-pill[data-tooltip], .mcal-event-bar[data-tooltip]');
+  const pill = e.target.closest('.mcal-pill[data-tooltip], .mcal-bar[data-tooltip]');
   if (pill) tip.style.display = 'none';
 });
