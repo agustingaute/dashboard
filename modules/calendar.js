@@ -141,7 +141,7 @@ function renderMonthGrid(items, today) {
         ? (0.02 + (d - 1) / (daysInMonth - 1) * 0.07).toFixed(4)
         : '0.18';
       const todayAttr = isToday ? ' data-today="1"' : '';
-      bgColsHtml += `<div class="mcal-barcol-bg" style="background:rgba(0,0,0,${shade})"${todayAttr}></div>`;
+      bgColsHtml += `<div class="mcal-barcol-bg" style="background:rgba(0,0,0,${shade})" data-col="${col}"${todayAttr}></div>`;
     }
 
     // ── Multi-day bars (absolutely positioned with % widths) ──
@@ -201,7 +201,7 @@ function renderMonthGrid(items, today) {
 
       const morePill = more > 0 ? `<div class="mcal-more">+${more}</div>` : '';
 
-      cellsHtml += `<div class="${cls}" style="--shade:rgba(0,0,0,${shade})">
+      cellsHtml += `<div class="${cls}" style="--shade:rgba(0,0,0,${shade})" data-col="${col}">
         <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
         ${pillsHtml || morePill ? `<div class="mcal-pills">${pillsHtml}${morePill}</div>` : ''}
       </div>`;
@@ -235,6 +235,22 @@ function renderMonthGrid(items, today) {
 export function refreshCalendar() {
   listEvents();
 }
+
+// ── Column hover: highlight full column (bars section + cells section) ──
+document.addEventListener('mouseover', e => {
+  const cell = e.target.closest('.mcal-cell:not(.mcal-cell--empty)');
+  if (!cell) return;
+  const week = cell.closest('.mcal-week');
+  const col  = cell.dataset.col;
+  week?.querySelector(`.mcal-barcol-bg[data-col="${col}"]`)?.classList.add('mcal-barcol-bg--hover');
+});
+
+document.addEventListener('mouseout', e => {
+  const cell = e.target.closest('.mcal-cell:not(.mcal-cell--empty)');
+  if (!cell) return;
+  const week = cell.closest('.mcal-week');
+  week?.querySelectorAll('.mcal-barcol-bg--hover').forEach(el => el.classList.remove('mcal-barcol-bg--hover'));
+});
 
 // ── Tooltip global ──
 const tip = document.getElementById('cal-tooltip');
