@@ -779,23 +779,26 @@ body::before {
 
 /* Each week = 7-col sub-grid.
    Row 1 (auto): day number cells — explicit grid-row:1
-   Rows 2+ (16px each): multi-day bars — auto-placed by CSS grid */
+   Rows 2+ (16px each): multi-day bars — auto-placed by CSS grid
+   background fills bar-row areas so no white gaps show */
 .mcal-week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: auto;
   grid-auto-rows: 16px;
   column-gap: 0;
-  row-gap: 2px;
+  row-gap: 0;
   flex: 1;
   min-height: 0;
   overflow: hidden;
   align-content: start;
   border-top: 1px solid rgba(0,0,0,0.07);
+  background: rgba(0,0,0,0.04);
 }
 
 .mcal-event-bar {
-  height: 14px;
+  height: 13px;
+  margin: 1px 1px 2px;
   border-radius: 3px;
   display: flex;
   align-items: center;
