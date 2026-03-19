@@ -51,130 +51,123 @@ function renderMonthGrid(items, today) {
 
   const monthName = today.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
 
-  // Build map: key -> [{ color, title, startDT, endDT, allDay }]
-  const byDay = {};
-  const addToDay = (d, entry) => {
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-    if (!byDay[key]) byDay[key] = [];
-    byDay[key].push(entry);
-  };
+  // Classify events: single-day (pills) vs multi-day (spanning bars)
+  const singleByDay = {};
+  const multis = [];
 
   items.forEach(ev => {
     if (ev.start.date) {
-      // All-day: may span multiple days — end.date is exclusive per Google API
       const [sy, sm, sd] = ev.start.date.split('-').map(Number);
       const [ey, em, ed] = (ev.end?.date || ev.start.date).split('-').map(Number);
-      const start = new Date(sy, sm - 1, sd);
-      const end   = new Date(ey, em - 1, ed); // exclusive
-      for (const d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-        addToDay(new Date(d), { color: ev._calColor, title: ev.summary || '', startDT: null, endDT: null, allDay: true });
+      const s = new Date(sy, sm - 1, sd);
+      const e = new Date(ey, em - 1, ed); // exclusive
+      if ((e - s) / 86400000 > 1) {
+        multis.push({ color: ev._calColor, title: ev.summary || '', s, e });
+      } else {
+        const key = `${sy}-${sm - 1}-${sd}`;
+        (singleByDay[key] = singleByDay[key] || []).push({ color: ev._calColor, title: ev.summary || '', startDT: null, endDT: null });
       }
     } else {
-      const startD = new Date(ev.start.dateTime);
-      const endD   = new Date(ev.end?.dateTime || ev.start.dateTime);
-      const startDay = new Date(startD.getFullYear(), startD.getMonth(), startD.getDate());
-      const endDay   = new Date(endD.getFullYear(),   endD.getMonth(),   endD.getDate());
-      for (const d = new Date(startDay); d <= endDay; d.setDate(d.getDate() + 1)) {
-        const isFirst = d.getTime() === startDay.getTime();
-        addToDay(new Date(d), {
-          color:   ev._calColor,
-          title:   ev.summary || '',
-          startDT: isFirst ? ev.start.dateTime : null,
-          endDT:   null,
-          allDay:  false,
-        });
+      const sd = new Date(ev.start.dateTime);
+      const ed = new Date(ev.end?.dateTime || ev.start.dateTime);
+      const sDay = new Date(sd.getFullYear(), sd.getMonth(), sd.getDate());
+      const eDay = new Date(ed.getFullYear(), ed.getMonth(), ed.getDate());
+      if (eDay > sDay) {
+        multis.push({ color: ev._calColor, title: ev.summary || '', s: sDay, e: new Date(eDay.getTime() + 86400000) });
+      } else {
+        const key = `${sDay.getFullYear()}-${sDay.getMonth()}-${sDay.getDate()}`;
+        (singleByDay[key] = singleByDay[key] || []).push({ color: ev._calColor, title: ev.summary || '', startDT: ev.start.dateTime, endDT: ev.end?.dateTime || null });
       }
     }
   });
 
   const daysInMonth  = new Date(year, month + 1, 0).getDate();
   const firstWeekday = new Date(year, month, 1).getDay();
+  const totalRows    = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
 
   const dayHeaders = ['D','L','M','X','J','V','S']
     .map(d => `<div class="mcal-dow">${d}</div>`).join('');
 
-  let cells = '';
-  for (let i = 0; i < firstWeekday; i++) {
-    cells += `<div class="mcal-cell mcal-cell--empty"></div>`;
-  }
+  let weeksHtml = '';
+  for (let w = 0; w < totalRows; w++) {
+    const weekBaseDay = 1 - firstWeekday + w * 7; // day-of-month for col 0 (Sunday) of this week
+    const weekStart   = new Date(year, month, weekBaseDay);
+    const weekEnd     = new Date(year, month, weekBaseDay + 6);
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const key     = `${year}-${month}-${day}`;
-    const events  = byDay[key] || [];
-    const isToday = day === todayDate;
-    const isPast  = day < todayDate;
+    // Day cells
+    let dayCells = '';
+    for (let col = 0; col < 7; col++) {
+      const dom  = weekBaseDay + col; // day-of-month (can be < 1 or > daysInMonth)
+      const date = new Date(year, month, dom);
+      const d    = date.getDate();
+      const isCurrentMonth = dom >= 1 && dom <= daysInMonth;
+      const isPrevMonth    = dom < 1;
+      const isNextMonth    = dom > daysInMonth;
+      const isToday        = isCurrentMonth && d === todayDate;
+      const isPast         = isCurrentMonth && d < todayDate;
 
-    const shade = (0.02 + (day - 1) / (daysInMonth - 1) * 0.07).toFixed(4);
-    const shadeStyle = `--day-shade: rgba(0,0,0,${shade})`;
-
-    const maxPills = 3;
-    const pills = events.slice(0, maxPills).map(ev => {
-      const label = ev.title.split(' ').slice(0, 3).join(' ') || '•';
-      let timeStr = '';
-      if (ev.startDT) {
-        const fmt = t => new Date(t).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-        timeStr = fmt(ev.startDT) + (ev.endDT ? ' – ' + fmt(ev.endDT) : '');
-      } else {
-        timeStr = 'Todo el día';
+      if (isPrevMonth) {
+        dayCells += `<div class="mcal-cell mcal-cell--empty" style="grid-row:1"></div>`;
+        continue;
       }
-      const tooltip = `${ev.title}\n${timeStr}`;
-      return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
-        <span class="mcal-event-dot" style="background:${ev.color}"></span>
-        <span class="mcal-event-label">${label}</span>
-      </div>`;
-    }).join('');
 
-    const overflow = events.length > maxPills
-      ? `<div class="mcal-event-more">+${events.length - maxPills}</div>`
-      : '';
+      const shade = isCurrentMonth
+        ? (0.02 + (d - 1) / (daysInMonth - 1) * 0.07).toFixed(4)
+        : '0.18';
 
-    cells += `
-      <div class="mcal-cell${isToday ? ' mcal-cell--today' : ''}${isPast ? ' mcal-cell--past' : ''}" style="${shadeStyle}">
-        <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${day}</span>
+      const key    = `${date.getFullYear()}-${date.getMonth()}-${d}`;
+      const events = singleByDay[key] || [];
+      const pills  = events.slice(0, 2).map(ev => {
+        const label   = ev.title.split(' ').slice(0, 3).join(' ') || '•';
+        const timeStr = ev.startDT
+          ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+          : 'Todo el día';
+        const tooltip = `${ev.title}\n${timeStr}`;
+        return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
+          <span class="mcal-event-dot" style="background:${ev.color}"></span>
+          <span class="mcal-event-label">${label}</span>
+        </div>`;
+      }).join('');
+      const overflow = events.length > 2 ? `<div class="mcal-event-more">+${events.length - 2}</div>` : '';
+
+      const cls = ['mcal-cell', isToday ? 'mcal-cell--today' : '', isPast ? 'mcal-cell--past' : '', isNextMonth ? 'mcal-cell--next-month' : ''].filter(Boolean).join(' ');
+      dayCells += `<div class="${cls}" style="grid-row:1; --day-shade:rgba(0,0,0,${shade})">
+        <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
         <div class="mcal-events">${pills}${overflow}</div>
       </div>`;
-  }
+    }
 
-  // Fill trailing cells with next month's days
-  const totalRows  = Math.max(5, Math.ceil((firstWeekday + daysInMonth) / 7));
-  const totalCells = totalRows * 7;
-  const usedCells  = firstWeekday + daysInMonth;
-  const nextMonth  = month === 11 ? 0 : month + 1;
-  const nextYear   = month === 11 ? year + 1 : year;
-  for (let i = 1; i <= totalCells - usedCells; i++) {
-    const key    = `${nextYear}-${nextMonth}-${i}`;
-    const events = byDay[key] || [];
-    const pills  = events.slice(0, 3).map(ev => {
-      const label   = ev.title.split(' ').slice(0, 3).join(' ') || '•';
-      const timeStr = ev.startDT
-        ? new Date(ev.startDT).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
-        : 'Todo el día';
-      const tooltip = `${ev.title}\n${timeStr}`;
-      return `<div class="mcal-event-pill" data-tooltip="${tooltip.replace(/"/g, '&quot;')}" data-color="${ev.color}">
-        <span class="mcal-event-dot" style="background:${ev.color}"></span>
-        <span class="mcal-event-label">${label}</span>
-      </div>`;
-    }).join('');
-    cells += `<div class="mcal-cell mcal-cell--next-month" style="--day-shade: rgba(0,0,0,0.18)">
-      <span class="mcal-num">${i}</span>
-      <div class="mcal-events">${pills}</div>
-    </div>`;
+    // Multi-day event bars
+    let bars = '';
+    multis
+      .filter(ev => ev.s <= weekEnd && ev.e > weekStart)
+      .forEach(ev => {
+        const barStart   = ev.s < weekStart ? 1 : ev.s.getDay() + 1;
+        const lastDay    = new Date(ev.e.getTime() - 86400000); // e is exclusive → last real day
+        const lastInWeek = lastDay > weekEnd ? weekEnd : lastDay;
+        const barEnd     = lastInWeek.getDay() + 1;
+        const span       = barEnd - barStart + 1;
+        const tip        = ev.title.replace(/"/g, '&quot;');
+        bars += `<div class="mcal-event-bar" style="grid-column:${barStart}/span ${span}; --bar-color:${ev.color}" data-tooltip="${tip}" data-color="${ev.color}">
+          <span class="mcal-event-bar-label">${ev.title}</span>
+        </div>`;
+      });
+
+    weeksHtml += `<div class="mcal-week">${dayCells}${bars}</div>`;
   }
 
   const legendItems = CALENDARS.map(c =>
     `<span class="mcal-legend-item"><span class="mcal-event-dot" style="background:${c.color}"></span>${c.name}</span>`
   ).join('');
 
-  const gridRows = `18px repeat(${totalRows}, 1fr)`;
-
   el.innerHTML = `
     <div class="mcal-header">
       <span class="mcal-month-label">${monthName}</span>
       <div class="mcal-legend">${legendItems}</div>
     </div>
-    <div class="mcal-grid" style="grid-template-rows: ${gridRows}">
-      ${dayHeaders}
-      ${cells}
+    <div class="mcal-grid">
+      <div class="mcal-dow-row">${dayHeaders}</div>
+      ${weeksHtml}
     </div>`;
 }
 
