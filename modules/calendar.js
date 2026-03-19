@@ -1,8 +1,8 @@
 // Calendar IDs (all public, no OAuth needed)
 const CALENDARS = [
-  { id: 'agustingaute@gmail.com',                                                                          color: '#22c55e', name: 'Personal'      },
-  { id: 'b6720a0cc1fb28d21bc25f874481e4722b2147d93e2762c65822d0e6589e3ed4@group.calendar.google.com',     color: '#f97316', name: 'River Content' },
-  { id: 'calendarioriverplate@gmail.com',                                                                  color: '#ef4444', name: 'River Plate'   },
+  { id: 'agustingaute@gmail.com',                                                                          color: '#6B6B6B', name: 'Personal'      },
+  { id: 'b6720a0cc1fb28d21bc25f874481e4722b2147d93e2762c65822d0e6589e3ed4@group.calendar.google.com',     color: '#2D2D2D', name: 'River Content' },
+  { id: 'calendarioriverplate@gmail.com',                                                                  color: '#C8102E', name: 'River Plate'   },
 ];
 
 async function fetchEvents(calendarId, apiKey) {
