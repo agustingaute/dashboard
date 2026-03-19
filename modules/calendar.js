@@ -53,25 +53,26 @@ function renderMonthGrid(items, today) {
 
   // Build map: key -> [{ color, title, startDT, endDT, allDay }]
   const byDay = {};
+  const addToDay = (d, entry) => {
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!byDay[key]) byDay[key] = [];
+    byDay[key].push(entry);
+  };
+
   items.forEach(ev => {
-    let year, month, day;
     if (ev.start.date) {
-      // All-day: "YYYY-MM-DD" — parse directly to avoid UTC offset shifting the date
-      [year, month, day] = ev.start.date.split('-').map(Number);
-      month -= 1; // JS months are 0-indexed
+      // All-day: may span multiple days — end.date is exclusive per Google API
+      const [sy, sm, sd] = ev.start.date.split('-').map(Number);
+      const [ey, em, ed] = (ev.end?.date || ev.start.date).split('-').map(Number);
+      const start = new Date(sy, sm - 1, sd);
+      const end   = new Date(ey, em - 1, ed); // exclusive
+      for (const d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+        addToDay(new Date(d), { color: ev._calColor, title: ev.summary || '', startDT: null, endDT: null, allDay: true });
+      }
     } else {
       const d = new Date(ev.start.dateTime);
-      year = d.getFullYear(); month = d.getMonth(); day = d.getDate();
+      addToDay(d, { color: ev._calColor, title: ev.summary || '', startDT: ev.start.dateTime, endDT: ev.end?.dateTime || null, allDay: false });
     }
-    const key = `${year}-${month}-${day}`;
-    if (!byDay[key]) byDay[key] = [];
-    byDay[key].push({
-      color:   ev._calColor,
-      title:   ev.summary || '',
-      startDT: ev.start.dateTime || null,
-      endDT:   ev.end?.dateTime   || null,
-      allDay:  !!ev.start.date && !ev.start.dateTime,
-    });
   });
 
   const daysInMonth  = new Date(year, month + 1, 0).getDate();
