@@ -1,7 +1,7 @@
 // Calendar IDs (all public, no OAuth needed)
 const CALENDARS = [
-  { id: 'agustingaute@gmail.com',                                                                          color: '#6B6B6B', name: 'Personal'      },
-  { id: 'b6720a0cc1fb28d21bc25f874481e4722b2147d93e2762c65822d0e6589e3ed4@group.calendar.google.com',     color: '#2D2D2D', name: 'River Content' },
+  { id: 'agustingaute@gmail.com',                                                                          color: 'rgba(120,120,120,0.5)', name: 'Personal'      },
+  { id: 'b6720a0cc1fb28d21bc25f874481e4722b2147d93e2762c65822d0e6589e3ed4@group.calendar.google.com',     color: 'rgba(50,50,50,0.4)',    name: 'River Content' },
   { id: 'calendarioriverplate@gmail.com',                                                                  color: '#C8102E', name: 'River Plate'   },
 ];
 
