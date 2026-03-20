@@ -830,6 +830,10 @@ body::before {
 .mcal-barcol-bg {
   border-right: 1px solid rgba(0,0,0,0.1);
   transition: background 0.15s;
+  display: flex;
+  justify-content: flex-end;  /* number to the right */
+  align-items: flex-start;    /* number to the top */
+  padding: 3px 4px 0;
 }
 .mcal-barcol-bg:last-child { border-right: none; }
 .mcal-barcol-bg[data-today="1"] { background: rgba(232,37,58,0.06) !important; }
@@ -874,10 +878,10 @@ body::before {
 }
 
 .mcal-cell {
-  padding: 4px 4px 3px;
+  padding: 2px 3px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   background: var(--shade, transparent);
   border-right: 1px solid rgba(0,0,0,0.1);
   min-height: 0;
@@ -900,10 +904,10 @@ body::before {
   justify-content: center;
   width: 18px;
   height: 18px;
-  align-self: flex-end;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
 }
+.mcal-num--faded { opacity: 0.4; }
 .mcal-num--today {
   background: var(--cyan);
   color: var(--bg);
