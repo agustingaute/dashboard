@@ -118,6 +118,7 @@ function renderMonthGrid(items, today) {
   // New architecture: each week = bars section (position:relative, bars use % widths)
   //                              + cells section (7-col grid below)
   // Column backgrounds are rendered in BOTH sections so shading is continuous.
+  const NUM_H     = 22; // px reserved at top of bars section for day numbers
   const BAR_ROW_H = 18; // px per bar row (14px bar + 2px top + 2px bottom)
 
   const dayHeaders = ['D','L','M','X','J','V','S']
@@ -128,7 +129,8 @@ function renderMonthGrid(items, today) {
     const wBase  = 1 - firstWeekday + w * 7;
     const packed = packBars(multiDayByWeek[w]);
     const numBarRows   = packed.length > 0 ? Math.max(...packed.map(b => b.row)) + 1 : 0;
-    const barsHeight   = numBarRows * BAR_ROW_H + (numBarRows > 0 ? 3 : 0); // +3px bottom pad
+    // Bars section always shows (contains day numbers at top + event bars below)
+    const barsHeight   = NUM_H + numBarRows * BAR_ROW_H;
 
     // ── Background columns for bars section (visual continuity with cells) ──
     let bgColsHtml = '';
@@ -141,7 +143,10 @@ function renderMonthGrid(items, today) {
         ? (0.02 + (d - 1) / (daysInMonth - 1) * 0.07).toFixed(4)
         : '0.18';
       const todayAttr = isToday ? ' data-today="1"' : '';
-      bgColsHtml += `<div class="mcal-barcol-bg" style="background:rgba(0,0,0,${shade})" data-col="${col}"${todayAttr}></div>`;
+      const numClass  = `mcal-num${isToday ? ' mcal-num--today' : ''}${!isCur ? ' mcal-num--faded' : ''}`;
+      bgColsHtml += `<div class="mcal-barcol-bg" style="background:rgba(0,0,0,${shade})" data-col="${col}"${todayAttr}>
+        <span class="${numClass}">${d}</span>
+      </div>`;
     }
 
     // ── Multi-day bars (absolutely positioned with % widths) ──
@@ -149,7 +154,7 @@ function renderMonthGrid(items, today) {
     packed.forEach(bar => {
       const left  = ((bar.colStart - 1) / 7 * 100).toFixed(3);
       const width = (bar.span / 7 * 100).toFixed(3);
-      const top   = bar.row * BAR_ROW_H + 2;
+      const top   = NUM_H + bar.row * BAR_ROW_H + 2;
       barsHtml += `<div class="mcal-bar"
         style="left:${left}%;width:${width}%;top:${top}px;background:${bar.color}"
         data-tooltip="${bar.title.replace(/"/g, '&quot;')}" data-color="${bar.color}">
@@ -202,14 +207,12 @@ function renderMonthGrid(items, today) {
       const morePill = more > 0 ? `<div class="mcal-more">+${more}</div>` : '';
 
       cellsHtml += `<div class="${cls}" style="--shade:rgba(0,0,0,${shade})" data-col="${col}">
-        <span class="mcal-num${isToday ? ' mcal-num--today' : ''}">${d}</span>
         ${pillsHtml || morePill ? `<div class="mcal-pills">${pillsHtml}${morePill}</div>` : ''}
       </div>`;
     }
 
-    const barsDisplay = barsHeight === 0 ? 'display:none;' : '';
     weeksHtml += `<div class="mcal-week">
-      <div class="mcal-week-bars" style="height:${barsHeight}px;${barsDisplay}">
+      <div class="mcal-week-bars" style="height:${barsHeight}px">
         <div class="mcal-bars-bg">${bgColsHtml}</div>
         ${barsHtml}
       </div>
