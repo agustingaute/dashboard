@@ -1,14 +1,12 @@
 const RIVER_ID = 'igi';
 const LIGA_ID  = 'hc';
-const PROXY    = 'https://api.codetabs.com/v1/proxy?quest=';
+const API      = 'https://api.promiedos.com.ar';
 
-async function fetchSSR(url) {
-  const res = await fetch(PROXY + encodeURIComponent(url), { headers: { Accept: 'text/html' } });
+async function fetchAPI(path) {
+  // La API devuelve {} si falta el header X-VER
+  const res = await fetch(API + path, { headers: { 'X-VER': '1.11.7.5' } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const html = await res.text();
-  const m = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
-  if (!m) throw new Error('Sin datos');
-  return JSON.parse(m[1]).props?.pageProps?.data;
+  return res.json();
 }
 
 function gameDate(startTime) {
@@ -125,8 +123,8 @@ function renderStandings(groups) {
 export async function refreshFootball() {
   try {
     const [team, league] = await Promise.all([
-      fetchSSR(`https://www.promiedos.com.ar/team/river-plate/${RIVER_ID}`),
-      fetchSSR(`https://www.promiedos.com.ar/league/liga-profesional/${LIGA_ID}`),
+      fetchAPI(`/team/${RIVER_ID}`),
+      fetchAPI(`/league/tables_and_fixtures/${LIGA_ID}`),
     ]);
     renderFixtures(team?.games?.next?.rows ?? []);
     renderStandings(league?.tables_groups ?? []);
