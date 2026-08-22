@@ -10,13 +10,12 @@ async function fetchAPI(path) {
 }
 
 function gameDate(startTime) {
+  // start_time ya viene en hora argentina; el sitio lo muestra tal cual sin convertir
   const [d, t] = startTime.split(' ');
   const [dd, mm, yyyy] = d.split('-');
-  const date = new Date(`${yyyy}-${mm}-${dd}T${t}:00+01:00`); // promiedos sends UTC+1 (Spain server)
-  const tz   = 'America/Argentina/Buenos_Aires';
-  const day  = date.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: tz });
-  const time = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz });
-  return { day, time: time + 'hs' };
+  const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  const day  = date.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
+  return { day, time: t + 'hs' };
 }
 
 function renderFixtures(rows) {
